@@ -4,7 +4,9 @@ import com.chiyun.material_quotation_conversion_tool.common.ApiResult;
 import com.chiyun.material_quotation_conversion_tool.entity.ExcelDataEntity;
 import com.chiyun.material_quotation_conversion_tool.entity.ProjectEntity;
 import com.chiyun.material_quotation_conversion_tool.repository.ExcelDataRepository;
+import com.chiyun.material_quotation_conversion_tool.repository.ProjectRepository;
 import com.chiyun.material_quotation_conversion_tool.utils.ExcelImportUtils;
+import com.chiyun.material_quotation_conversion_tool.utils.ExportExcel;
 import com.chiyun.material_quotation_conversion_tool.utils.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Api(description = "折算工具")
 @RequestMapping(value = "/conbersiontool", method = {RequestMethod.GET, RequestMethod.POST})
@@ -24,6 +30,8 @@ public class ExcelDataController {
     private ExcelDataRepository excelDataRepository;
     @Resource
     private ProjectController projectController;
+    @Resource
+    private ProjectRepository projectRepository;
 
 
     @ApiOperation(value = "导入excel数据")
@@ -61,34 +69,49 @@ public class ExcelDataController {
         ApiResult message = ExcelImportUtils.batchImport(projectEntity1.getId(),fileName, file, this);
         return message;
     }
-/*
 
     @ApiOperation(value = "折算后导出excel数据")
     @RequestMapping("exportExcel")
-    public ApiResult<Object> exportExcel(Integer xmbh, float discount){
-        //判断文件是否为空
-        if (file == null) {
-            return ApiResult.FAILURE("文件不能为空");
+    public ApiResult<Object> exportExcel(Integer xmbh, float discount, HttpServletResponse response){
+        List<Map<String, Object>> list = new ArrayList<>();
+        List<ExcelDataEntity> excelDataEntity=excelDataRepository.findByXmbh(xmbh);
+        ProjectEntity projectEntity =projectRepository.findById(xmbh);
+        if(excelDataEntity.isEmpty()){
+            return ApiResult.FAILURE("不存在该项目的数据");
         }
-
-        //获取文件名
-        String fileName = file.getOriginalFilename();
-
-        //验证文件名是否合格
-        if (!ExcelImportUtils.validateExcel(fileName)) {
-            return ApiResult.FAILURE("文件必须是excel格式");
+        float hjjg = 0;
+        for(ExcelDataEntity entity:excelDataEntity){
+            Map<String, Object> map=new LinkedHashMap<>();
+            map.put("产品名称",entity.getHwmc());
+            map.put("型号及规格",entity.getXhgg());
+            map.put("单位",entity.getHwdw());
+            map.put("数量",entity.getSl());
+            map.put("单价（元）",entity.getDj() * discount);
+            map.put("小计（元）",entity.getZj() * discount);
+            list.add(map);
+            hjjg=hjjg+entity.getZj() * discount;
         }
-
-        //进一步判断文件内容是否为空（即判断其大小是否为0或其名称是否为null）
-        long size = file.getSize();
-        if (StringUtils.isEmpty(fileName) || size == 0) {
-            return ApiResult.FAILURE("文件不能为空");
+            Map<String, Object> map1 = new LinkedHashMap<>();
+            map1.put("产品名称", "");
+            map1.put("型号及规格", "");
+            map1.put("单位", "");
+            map1.put("数量", "");
+            map1.put("单价（元）", "合计");
+            map1.put("小计（元）", hjjg);
+            list.add(map1);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String pattern = sdf.format(new Date());
+        String fileName = null;
+        String[] headers = list.get(0).keySet().toArray(new String[0]);
+        String title = "报价";
+        fileName = projectEntity.getXmmc() + ".xlsx";
+        try {
+            ExportExcel.exportExcel(fileName, title, headers, list, pattern, response);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        //批量导入
-        ApiResult message = ExcelImportUtils.batchImport(xmbh,fileName, file, this);
-        return message;
+        return null;
     }
-*/
 
     @ApiOperation(value = "保存数据")
     @RequestMapping("doSave")
