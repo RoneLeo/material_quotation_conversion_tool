@@ -28,7 +28,7 @@ public class Swagger2 {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("材料报价折算工具 RESTful APIs")
-                .description("材料报价折算工具后台api接口文档")
+                .description("材料报价折算工具后台api 接口文档")
                 .version("1.0")
                 .build();
     }
