@@ -55,7 +55,7 @@ public class ExcelImportUtils {
      * @param mfile
      * @return
      */
-    public static ApiResult batchImport(Integer xmbh, String fileName, MultipartFile mfile, ExcelDataController excelDataController, float discount) {
+    public static ApiResult batchImport(Integer xmbh, String fileName, MultipartFile mfile, ExcelDataController excelDataController) {
 
         File uploadDir = new File("C:\\fileupload");
         //创建一个目录 （它的路径名由当前 File 对象指定，包括任一必须的父路径。）
@@ -80,7 +80,7 @@ public class ExcelImportUtils {
                 wb = new HSSFWorkbook(is);
             }
             //根据excel里面的内容读取知识库信息
-            return readExcelValue(xmbh, wb, tempFile, excelDataController, discount);
+            return readExcelValue(xmbh, wb, tempFile, excelDataController);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -103,7 +103,7 @@ public class ExcelImportUtils {
      * @param wb
      * @return
      */
-    private static ApiResult readExcelValue(Integer xmbh,Workbook wb, File tempFile, ExcelDataController excelDataController, float discount) throws ParseException {
+    private static ApiResult readExcelValue(Integer xmbh,Workbook wb, File tempFile, ExcelDataController excelDataController) throws ParseException {
         //导入数据数量
         int sj=0;
         //错误信息接收器
@@ -139,28 +139,22 @@ public class ExcelImportUtils {
                 } else if (c == 2) {
                         excelDataEntity.setXhgg(cell.getStringCellValue());
                 }else if (c == 3) {
-                        System.out.print("货物单位:"+cell.getStringCellValue());
                         if(cell.getStringCellValue().isEmpty()){
-                            flag=false;
                             break;
                         }
                         excelDataEntity.setHwdw(cell.getStringCellValue());
                     }else if (c == 4) {
                         excelDataEntity.setSl((int) cell.getNumericCellValue());
                     }else if (c == 5) {
-                        excelDataEntity.setDj((float) cell.getNumericCellValue() * discount);
+                        excelDataEntity.setDj((float) cell.getNumericCellValue());
                     }else if (c == 6) {
-                        excelDataEntity.setZj((float) cell.getNumericCellValue() * discount);
+                        excelDataEntity.setZj((float) cell.getNumericCellValue());
                     }
             }
             excelDataEntity.setXmbh(xmbh);
             excelDataEntity.setCjsj(new Date());
             ApiResult result = null;
-            if(flag==true){
                 result = excelDataController.doSave(excelDataEntity);
-            }else{
-                break;
-            }
             if (result.getResCode() == -1) {
                 errorMsg += br + "第" + (r - 2) + "行，" + result.getResMsg();
             } else if(result.getResCode() == 200){

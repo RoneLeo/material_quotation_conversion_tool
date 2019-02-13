@@ -27,7 +27,7 @@ public class ProjectController {
         if(save==null){
             return ApiResult.FAILURE("添加失败");
         }
-        return ApiResult.SUCCESS("添加成功");
+        return ApiResult.SUCCESS(save);
     }
 
     @ApiOperation(value = "删除项目")
@@ -69,5 +69,10 @@ public class ProjectController {
             return ApiResult.FAILURE("该项目不存在");
         }
         return ApiResult.SUCCESS(result);
+    }
+
+    public ProjectEntity add1(ProjectEntity projectEntity){
+        ProjectEntity save = projectRepository.save(projectEntity);
+        return save;
     }
 }
