@@ -31,19 +31,20 @@ body {
     background-color: #fff;
 }
 .header {
-    /*padding: 5px;*/
     background: url("../img/22.png");
-    padding: 14px;
     width: 60%;
     margin: 10px auto;
-    /*opacity: .8;*/
 }
-.header p {
+.header>div {
     font-size: 32px;
+    line-height: 130px;
     font-weight: 500;
     letter-spacing: 3px;
     color: #560066;
     text-align: center;
+}
+#back-btn {
+    display: none;
 }
 
 .am-btn-default.new-btn {
@@ -58,6 +59,7 @@ body {
 }
 .main {
     padding: 8px 20px;
+    min-height: 500px;
 }
 .main>div {
     position: relative;
@@ -87,7 +89,7 @@ body {
 }
 .result .result-num {
     padding-left: 20px;
-    font-size: 46px;
+    font-size: 54px;
     color: #890098;
 }
 .result .result-num a{
@@ -99,6 +101,10 @@ body {
 }
 .result .result-num a:hover {
     color: #560066;
+}
+#add {
+    padding: 40px 20px;
+    margin: 50px auto;
 }
 .add {
     display: none;

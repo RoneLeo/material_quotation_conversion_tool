@@ -18,11 +18,12 @@
 </head>
 <body>
 <div class="header">
-    <p class="am-serif">工程项目价格计算小工具</p>
+    <div class="am-serif">工程项目价格计算小工具</div>
 </div>
 <div class="white-bg center main">
-    <div class="new-btn" style="border: 0;margin: 10px 0 0 0;padding: 0;height: 30px">
-        <button id="new-btn" type="button" class="am-btn am-btn-default am-round new-btn" style="float: right;margin-right: 10px">+</button>
+    <div style="border: 0;margin: 10px 0 0 0;padding: 0;height: 30px">
+        <button id="new-btn" type="button" class="am-btn am-btn-default am-round new-btn" style="float: right;margin-right: 10px">+ new</button>
+        <button id="back-btn" type="button" class="am-btn am-btn-default am-round new-btn" style="float: right;margin-right: 10px"> ← back </button>
     </div>
     <div id="search" class="search">
         <span class="title">计算框</span>
@@ -31,19 +32,20 @@
                 <label for="selectGroup" class="am-u-lg-2 am-u-md-3 am-u-sm-5 am-form-label">项目名称：</label>
                 <div class="am-u-lg-10 am-u-md-9 am-u-sm-7">
                     <select id="selectGroup" data-am-selected="{btnWidth: '100%', btnSize: 'sm'}"
-                            onchange="companyChange()" style="background-color: #2f4d93;display: inline-block">
+                            onchange="projectChange()">
                     </select>
                 </div>
             </div>
             <div class="am-form-group">
                 <label for="rate" class="am-u-lg-2 am-u-md-3 am-u-sm-5 am-form-label">计算比率：</label>
                 <div class="am-u-lg-10 am-u-md-9 am-u-sm-7">
-                    <input type="number" class="form-control" id="rate" placeholder="如：0.85">
+                    <input type="number" class="form-control" id="rate" step="0.01" min="0.0" placeholder="如：0.85">
                 </div>
             </div>
             <div class="am-form-group">
                 <div class="am-u-sm-7 am-u-sm-offset-5 am-u-lg-10 am-u-lg-offset-2 am-u-md-9 am-u-md-offset-3">
-                    <button type="submit" class="am-btn am-btn-default">计算</button>
+                    <input id="count-btn" type="submit" onclick="getResult()">
+                    <!--<button id="count-btn" onclick="getResult()" class="am-btn am-btn-default">计算</button>-->
                 </div>
             </div>
         </form>
@@ -76,7 +78,7 @@
 
                 <div class="am-form-group">
                     <div class="am-u-sm-7 am-u-sm-offset-5 am-u-lg-10 am-u-lg-offset-2 am-u-md-9 am-u-md-offset-3">
-                        <button type="submit" class="am-btn am-btn-default">导入</button>
+                        <button id="addFile" onclick="importProject()" type="submit" class="am-btn am-btn-default">导入</button>
                     </div>
                 </div>
             </form>
@@ -89,98 +91,76 @@
     <script>
         console.log(document.getElementsByTagName('body'))
         var ServerUrl = 'http://182.151.22.247:8085';
+        var selectedId, discountNum;
         $(function () {
             $('#new-btn').click(function () {
                 $('.add').eq(0).toggle();
                 $('.search').eq(0).toggle();
                 $('.result').eq(0).toggle();
                 $('.new-btn').eq(0).toggle();
+                $('.new-btn').eq(1).toggle();
             });
+            $('#back-btn').click(function () {
+                $('.add').eq(0).toggle();
+                $('.search').eq(0).toggle();
+                $('.result').eq(0).toggle();
+                $('.new-btn').eq(0).toggle();
+                $('.new-btn').eq(1).toggle();
+            });
+            $('#rate').on('input propertychange', function (e) {
+                var value = e.target.value;
+                if( value === '') {
+                    value = 0;
+                }
+                discountNum = parseFloat(value);
+            })
             getAllProject();
-        })
-        function getAllProject() {
-            console.log(111)
+        });
+        function importProject() {
+            console.log($('#newFile'))
+            console.log($('#newName'))
+
+        }
+        function getResult() {
+            console.log(selectedId, discountNum);
             $.ajax({
                 url: ServerUrl + '/project/findAll',
-                type: 'GET',
-//                headers:{
-//                    "Access-Control-Allow-Origin": "*"
-//                },
+                type: 'POST',
+                data: {
+                    xmbh: selectedId,
+                    discount, discountNum
+                },
                 success:function(data) {
                     console.log(data)
                 },
                 error : function() {
-                    alert("异常！");
+                    alert("请求数据异常！");
                 }
             });
-//            $.get(ServerUrl + '/project/findAll',function (json) {
-//                console.log(json)
-                // var companyData = json.data;
-                // var selectOptions = '';
-                // var content;
-                //
-                // for(let i = 0; i < companyData.length; i ++) {
-                //     if(companyData[i].gslx === 1) {  //总公司
-                //         content = companyData[i];
-                //         var gsmc = content.gsmc;
-                //         var lxdh = content.lxdh;
-                //         var lxcz = content.lxcz;
-                //         var gswz = content.gswz;
-                //         var gsjj = content.gsjj;
-                //         var lxyb = content.lxyb;
-                //         var lxdz = content.lxdz;
-                //         var lxyx = content.lxyx;
-                //         var baxx = content.baxx;
-                //         var gsgjz = content.gjz;
-                //         var gsms = content.gsms;
-                //         var goInTxt = gsmc.substr(2,2);
-                //         //顶部信息
-                //         var head = '<div class="head_logo">\n' +
-                //             '<a href="index.html">\n' +
-                //             '<img class="head_logo_img" src="img/rf-logo.png" alt="">' + gsmc +
-                //             '</a>\n' +
-                //             '</div>\n' +
-                //             '<div class="head_tel">\n' +
-                //             '<div class="head_tel_img"><img src="http://www.ytrsrf.com/images/tel.png"></div>\n' +
-                //             '<div class="head_tel_phone">\n' +
-                //             '    <div class="head_tel_phone_a c">联系电话</div>\n' +
-                //             '    <div class="head_tel_phone_b c">'+lxdh+'</div>\n' +
-                //             '</div>\n' +
-                //             '</div>'
-                //         $('#headTop').html(head);
-                //         $('#headTitle,#contactName').text(gsmc);
-                //         $('#headKeywords').attr('content',gsgjz);
-                //         $('#headDescription').attr('content',gsms);
-                //
-                //         //公共底部信息
-                //         $('#footerPhone,#contactPhone').text(lxdh);
-                //         $('#footerAddress,#contactAddress').text(lxdz);
-                //         $('#footerUrl,#contactUrl').text(gswz);
-                //         $('#footerFax,#contactFax').text(lxcz);
-                //         $('#footerPostcode,#contactPostcode').text(lxyb);
-                //         $('#contactEmail').text(lxyx);
-                //         $('#baxx').text(baxx);
-                //         let qrCodeHtml = '<div class="foot_li_ewm_a"><img src="'+imgSrc+'" alt="" /></div>\n' +
-                //             '<div class="foot_li_ewm_a"><img src="'+imgSrc+'" alt="" /></div>\n';
-                //         $('#qrCode').html(qrCodeHtml);
-                //
-                //         //公司简介
-                //         $('#introContent').html(gsjj);
-                //         $('.go-in').text('走进' + goInTxt);
-                //
-                //         //初始化地图
-                //         if($('#map').length){
-                //             initMap(content);
-                //         }
-                //         selectOptions += '<option value="'+ companyData[i].id + '" selected>' + companyData[i].gsmc + '</option>'
-                //     }else {
-                //         selectOptions += '<option value="'+ companyData[i].id + '">' + companyData[i].gsmc + '</option>'
-                //     }
-                // }
-                // $('#selectGroup').html(selectOptions);
-
-
-//            });
+        }
+        function projectChange(){
+            var objS = document.getElementById("selectGroup");
+            var projectId = objS.options[objS.selectedIndex].value;
+            selectedId = projectId;
+        }
+        function getAllProject() {
+            $.ajax({
+                url: ServerUrl + '/project/findAll',
+                type: 'GET',
+                success:function(data) {
+                    var projects = data.data;
+                    var selectGroupHtml = '';
+                    if(projects && projects.length) {
+                        projects.forEach(function (item) {
+                            selectGroupHtml += '<option value="'+ item.id + '">' + item.xmmc + '</option>';
+                        })
+                    }
+                    $('#selectGroup').html(selectGroupHtml);
+                },
+                error : function() {
+                    alert("请求数据异常！");
+                }
+            });
         }
 
     </script>
