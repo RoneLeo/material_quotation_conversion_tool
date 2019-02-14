@@ -2,6 +2,7 @@ package com.chiyun.material_quotation_conversion_tool.controller;
 
 import com.chiyun.material_quotation_conversion_tool.common.ApiResult;
 import com.chiyun.material_quotation_conversion_tool.entity.ProjectEntity;
+import com.chiyun.material_quotation_conversion_tool.repository.ExcelDataRepository;
 import com.chiyun.material_quotation_conversion_tool.repository.ProjectRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,6 +20,8 @@ public class ProjectController {
 
     @Resource
     private ProjectRepository projectRepository;
+    @Resource
+    private ExcelDataRepository excelDataRepository;
 
     @ApiOperation(value = "添加项目")
     @RequestMapping("add")
@@ -33,9 +36,13 @@ public class ProjectController {
     @ApiOperation(value = "删除项目")
     @RequestMapping("del")
     public ApiResult<Object> del(Integer id){
-        int result = projectRepository.deleteById(id);
-        if (result != 1) {
-            return ApiResult.FAILURE("删除失败");
+        int excelResult=excelDataRepository.deleteByXmbh(id);
+        if (excelResult == 1) {
+            return ApiResult.FAILURE("excel数据删除失败");
+        }
+        int projectResult = projectRepository.deleteById(id);
+        if (projectResult == 1) {
+            return ApiResult.FAILURE("项目删除失败");
         }
         return ApiResult.SUCCESS("删除成功");
     }
