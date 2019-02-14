@@ -6,7 +6,7 @@
     <title id="headTitle">工程项目价格计算小工具</title>
     <meta name="keywords" id="headKeywords" content="">
     <meta name="description" id="headDescription" content="">
-    <link rel="icon" type="image/x-icon" href="img/dis.ico" />
+    <link rel="icon" type="image/x-icon" href="img/dis.ico"/>
 
     <link rel="stylesheet" href="css/amazeui.min.css">
     <link rel="stylesheet" href="css/iconfont/iconfont.css">
@@ -22,8 +22,7 @@
 </div>
 <div class="white-bg center main">
     <div style="border: 0;margin: 10px 0 0 0;padding: 0;height: 30px">
-        <button id="new-btn" type="button" class="am-btn am-btn-default am-round new-btn" style="float: right;margin-right: 10px">+ new</button>
-        <button id="back-btn" type="button" class="am-btn am-btn-default am-round new-btn" style="float: right;margin-right: 10px"> ← back </button>
+        <a id="new-btn" href="./manage.html" class="am-btn am-btn-default am-round new-btn">项目管理</a>
     </div>
     <div id="search" class="search">
         <span class="title">计算框</span>
@@ -44,7 +43,7 @@
             </div>
             <div class="am-form-group">
                 <div class="am-u-sm-7 am-u-sm-offset-5 am-u-lg-10 am-u-lg-offset-2 am-u-md-9 am-u-md-offset-3">
-                    <input id="count-btn" type="submit" onclick="getResult()">
+                    <!--<input id="count-btn" type="submit" onclick="getResult()">-->
                     <!--<button id="count-btn" onclick="getResult()" class="am-btn am-btn-default">计算</button>-->
                 </div>
             </div>
@@ -54,115 +53,45 @@
         <span class="title">结果框</span>
         <div class="am-g">
             <span class="result-num">
-                ￥0
-                <a href="">导出计算结果</a>
+                ￥<span id="price">0</span>
+                <a id="result-href">导出计算结果</a>
             </span>
         </div>
     </div>
-        <div id="add" class="add">
-            <span class="title">新建项目</span>
-            <form class="am-form am-form-horizontal" role="form">
-                <div class="am-form-group">
-                    <label for="newName" class="am-u-lg-2 am-u-md-3 am-u-sm-5 am-form-label">项目名称：</label>
-                    <div class="am-u-lg-10 am-u-md-9 am-u-sm-7">
-                        <input type="text" class="form-control" id="newName" placeholder="不填时，默认和导入文件名相同">
-                    </div>
+</div>
+<div class="white-bg center main">
+    <!--<div class="btn-box" style="border: 0;margin: 10px 0 0 0;padding: 0;height: 30px">-->
+        <!--<a id="back-btn" href="./index.html" class="am-btn am-btn-default am-round new-btn">← back</a>-->
+    <!--</div>-->
+    <div id="add" class="add">
+        <span class="title">新建项目</span>
+        <form class="am-form am-form-horizontal" role="form">
+            <div class="am-form-group">
+                <label for="newName" class="am-u-lg-2 am-u-md-3 am-u-sm-5 am-form-label">项目名称：</label>
+                <div class="am-u-lg-10 am-u-md-9 am-u-sm-7">
+                    <input type="text" class="form-control" id="newName" placeholder="不填时，默认和导入文件名相同">
                 </div>
+            </div>
 
-                <div class="am-form-group">
-                    <label for="newFile" class="am-u-lg-2 am-u-md-3 am-u-sm-5 am-form-label">清单文件：</label>
-                    <div class="am-u-lg-10 am-u-md-9 am-u-sm-7">
-                        <input type="file" class="form-control" id="newFile" style="padding-top: .6rem;">
-                    </div>
+            <div class="am-form-group">
+                <label for="newFile" class="am-u-lg-2 am-u-md-3 am-u-sm-5 am-form-label">清单文件：</label>
+                <div class="am-u-lg-10 am-u-md-9 am-u-sm-7">
+                    <input type="file" class="form-control" id="newFile" style="padding-top: .6rem;">
                 </div>
+            </div>
 
-                <div class="am-form-group">
-                    <div class="am-u-sm-7 am-u-sm-offset-5 am-u-lg-10 am-u-lg-offset-2 am-u-md-9 am-u-md-offset-3">
-                        <button id="addFile" onclick="importProject()" type="submit" class="am-btn am-btn-default">导入</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+            <!--<div class="am-form-group">-->
+                <!--<div class="am-u-sm-7 am-u-sm-offset-5 am-u-lg-10 am-u-lg-offset-2 am-u-md-9 am-u-md-offset-3">-->
+                    <!--<button id="addFile" onclick="importProject()" type="submit" class="am-btn am-btn-default">导入-->
+                    <!--</button>-->
+                <!--</div>-->
+            <!--</div>-->
+        </form>
     </div>
-    <div class="white-bg center footer">
-        Created By Chiyun@2019
-    </div>
-<!--<script src="js/index.js"></script>-->
-    <script>
-        console.log(document.getElementsByTagName('body'))
-        var ServerUrl = 'http://182.151.22.247:8085';
-        var selectedId, discountNum;
-        $(function () {
-            $('#new-btn').click(function () {
-                $('.add').eq(0).toggle();
-                $('.search').eq(0).toggle();
-                $('.result').eq(0).toggle();
-                $('.new-btn').eq(0).toggle();
-                $('.new-btn').eq(1).toggle();
-            });
-            $('#back-btn').click(function () {
-                $('.add').eq(0).toggle();
-                $('.search').eq(0).toggle();
-                $('.result').eq(0).toggle();
-                $('.new-btn').eq(0).toggle();
-                $('.new-btn').eq(1).toggle();
-            });
-            $('#rate').on('input propertychange', function (e) {
-                var value = e.target.value;
-                if( value === '') {
-                    value = 0;
-                }
-                discountNum = parseFloat(value);
-            })
-            getAllProject();
-        });
-        function importProject() {
-            console.log($('#newFile'))
-            console.log($('#newName'))
-
-        }
-        function getResult() {
-            console.log(selectedId, discountNum);
-            $.ajax({
-                url: ServerUrl + '/project/findAll',
-                type: 'POST',
-                data: {
-                    xmbh: selectedId,
-                    discount, discountNum
-                },
-                success:function(data) {
-                    console.log(data)
-                },
-                error : function() {
-                    alert("请求数据异常！");
-                }
-            });
-        }
-        function projectChange(){
-            var objS = document.getElementById("selectGroup");
-            var projectId = objS.options[objS.selectedIndex].value;
-            selectedId = projectId;
-        }
-        function getAllProject() {
-            $.ajax({
-                url: ServerUrl + '/project/findAll',
-                type: 'GET',
-                success:function(data) {
-                    var projects = data.data;
-                    var selectGroupHtml = '';
-                    if(projects && projects.length) {
-                        projects.forEach(function (item) {
-                            selectGroupHtml += '<option value="'+ item.id + '">' + item.xmmc + '</option>';
-                        })
-                    }
-                    $('#selectGroup').html(selectGroupHtml);
-                },
-                error : function() {
-                    alert("请求数据异常！");
-                }
-            });
-        }
-
-    </script>
+</div>
+<div class="white-bg center footer">
+    Created By Chiyun@2019
+</div>
+<script src="js/index.js"></script>
 </body>
 </html>
