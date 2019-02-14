@@ -113,6 +113,20 @@ public class ExcelDataController {
         return null;
     }
 
+    @ApiOperation(value = "折算后的总价")
+    @RequestMapping("discount")
+    public ApiResult<Object> discount(Integer xmbh, float discount) {
+        List<ExcelDataEntity> excelDataEntity=excelDataRepository.findByXmbh(xmbh);
+        if(excelDataEntity.isEmpty()){
+            return ApiResult.FAILURE("不存在该项目的数据");
+        }
+        float hjjg = 0;
+        for(int i=0;i<excelDataEntity.size();i++){
+            hjjg=hjjg+excelDataEntity.get(i).getZj() * discount;
+        }
+        return ApiResult.SUCCESS("总价："+hjjg);
+    }
+
     @ApiOperation(value = "保存数据")
     @RequestMapping("doSave")
     public ApiResult<Object> doSave(ExcelDataEntity excelDataEntity){
