@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -72,24 +73,28 @@ public class ExcelDataController {
 
     @ApiOperation(value = "折算后导出excel数据")
     @RequestMapping("exportExcel")
-    public ApiResult<Object> exportExcel(Integer xmbh, float discount, HttpServletResponse response){
+    public ApiResult<Object> exportExcel(Integer xmbh, BigDecimal discount, HttpServletResponse response){
         List<Map<String, Object>> list = new ArrayList<>();
         List<ExcelDataEntity> excelDataEntity=excelDataRepository.findByXmbh(xmbh);
         ProjectEntity projectEntity =projectRepository.findById(xmbh);
         if(excelDataEntity.isEmpty()){
             return ApiResult.FAILURE("不存在该项目的数据");
         }
-        float hjjg = 0;
+        BigDecimal hjjg = null;
         for(ExcelDataEntity entity:excelDataEntity){
             Map<String, Object> map=new LinkedHashMap<>();
             map.put("产品名称",entity.getHwmc());
             map.put("型号及规格",entity.getXhgg());
             map.put("单位",entity.getHwdw());
             map.put("数量",entity.getSl());
-            map.put("单价（元）",entity.getDj() * discount);
-            map.put("小计（元）",entity.getZj() * discount);
+            map.put("单价（元）",entity.getDj().multiply(discount));
+            map.put("小计（元）",entity.getZj().multiply(discount));
             list.add(map);
-            hjjg=hjjg+entity.getZj() * discount;
+            if (hjjg==null){
+                hjjg=entity.getZj().multiply(discount);
+            }else{
+                hjjg=entity.getZj().multiply(discount).add(hjjg);
+            }
         }
             Map<String, Object> map1 = new LinkedHashMap<>();
             map1.put("产品名称", "");
@@ -115,14 +120,20 @@ public class ExcelDataController {
 
     @ApiOperation(value = "折算后的总价")
     @RequestMapping("discount")
-    public ApiResult<Object> discount(Integer xmbh, float discount) {
+    public ApiResult<Object> discount(Integer xmbh, BigDecimal discount) {
         List<ExcelDataEntity> excelDataEntity=excelDataRepository.findByXmbh(xmbh);
         if(excelDataEntity.isEmpty()){
             return ApiResult.FAILURE("不存在该项目的数据");
         }
-        float hjjg = 0;
+        BigDecimal hjjg = null;
         for(int i=0;i<excelDataEntity.size();i++){
-            hjjg=hjjg+excelDataEntity.get(i).getZj() * discount;
+            if (hjjg==null){
+                hjjg=excelDataEntity.get(i).getZj().multiply(discount);
+                //System.out.print("第一次:"+hjjg);
+            }else{
+            hjjg=excelDataEntity.get(i).getZj().multiply(discount).add(hjjg);
+                //System.out.print("2222222："+hjjg);
+            }
         }
         return ApiResult.SUCCESS(hjjg);
     }

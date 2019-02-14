@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -148,9 +149,9 @@ public class ExcelImportUtils {
                     }else if (c == 4) {
                         excelDataEntity.setSl((int) cell.getNumericCellValue());
                     }else if (c == 5) {
-                        excelDataEntity.setDj((float) cell.getNumericCellValue());
+                        excelDataEntity.setDj(BigDecimal.valueOf(cell.getNumericCellValue()));
                     }else if (c == 6) {
-                        excelDataEntity.setZj((float) cell.getNumericCellValue());
+                        excelDataEntity.setZj(BigDecimal.valueOf(cell.getNumericCellValue()));
                     }
             }
             if (flag==false){
