@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ProjectRepository extends CrudRepository<ProjectEntity, String> {
     // 通过id删除
-    @Query(value = "delete from ordertable where id = ?1", nativeQuery = true)
+    @Query(value = "delete from project where id = ?1", nativeQuery = true)
     @Modifying
     @Transactional
     int deleteById(Integer id);

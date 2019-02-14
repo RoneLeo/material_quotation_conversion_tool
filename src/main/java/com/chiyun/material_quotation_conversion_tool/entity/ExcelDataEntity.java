@@ -3,6 +3,7 @@ package com.chiyun.material_quotation_conversion_tool.entity;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Objects;
@@ -22,9 +23,9 @@ public class ExcelDataEntity {
     @ApiModelProperty(value = "数量")
     private int sl;
     @ApiModelProperty(value = "单价")
-    private float dj;
+    private BigDecimal dj;
     @ApiModelProperty(value = "总价")
-    private float zj;
+    private BigDecimal zj;
     @ApiModelProperty(value = "创建时间")
     private Date cjsj;
     @ApiModelProperty(value = "备注")
@@ -94,21 +95,21 @@ public class ExcelDataEntity {
 
     @Basic
     @Column(name = "price")
-    public float getDj() {
+    public BigDecimal getDj() {
         return dj;
     }
 
-    public void setDj(float dj) {
+    public void setDj(BigDecimal dj) {
         this.dj = dj;
     }
 
     @Basic
     @Column(name = "total")
-    public float getZj() {
+    public BigDecimal getZj() {
         return zj;
     }
 
-    public void setZj(float zj) {
+    public void setZj(BigDecimal zj) {
         this.zj = zj;
     }
     @Basic

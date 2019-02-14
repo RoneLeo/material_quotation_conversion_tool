@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -130,7 +131,6 @@ public class ExcelImportUtils {
                 errorMsg += br + "第" + (r + 1) + "行数据有问题，请仔细检查！";
                 continue;
             }
-
             //循环Excel的列
             for (int c = 0; c < totalCells; c++) {
                 Cell cell = row.getCell(c);
@@ -139,17 +139,24 @@ public class ExcelImportUtils {
                 } else if (c == 2) {
                         excelDataEntity.setXhgg(cell.getStringCellValue());
                 }else if (c == 3) {
+                       // System.out.print("货物单位"+cell.getStringCellValue());
                         if(cell.getStringCellValue().isEmpty()){
+                           // System.out.print("1111111");
+                            flag=false;
                             break;
                         }
                         excelDataEntity.setHwdw(cell.getStringCellValue());
                     }else if (c == 4) {
                         excelDataEntity.setSl((int) cell.getNumericCellValue());
                     }else if (c == 5) {
-                        excelDataEntity.setDj((float) cell.getNumericCellValue());
+                        excelDataEntity.setDj(BigDecimal.valueOf(cell.getNumericCellValue()));
                     }else if (c == 6) {
-                        excelDataEntity.setZj((float) cell.getNumericCellValue());
+                        excelDataEntity.setZj(BigDecimal.valueOf(cell.getNumericCellValue()));
                     }
+            }
+            if (flag==false){
+                //System.out.print("22222222");
+                break;
             }
             excelDataEntity.setXmbh(xmbh);
             excelDataEntity.setCjsj(new Date());
@@ -165,8 +172,7 @@ public class ExcelImportUtils {
 
         //删除上传的临时文件
         if (tempFile.exists()) {
-System.out.print("文件名："+tempFile.getName());
-            //tempFile.delete();
+            tempFile.delete();
         }
 
         errorMsg = "导入成功，共" + sj + "条数据！" + errorMsg;
