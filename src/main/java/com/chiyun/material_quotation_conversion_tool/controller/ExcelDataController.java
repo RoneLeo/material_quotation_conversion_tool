@@ -124,7 +124,7 @@ public class ExcelDataController {
         for(int i=0;i<excelDataEntity.size();i++){
             hjjg=hjjg+excelDataEntity.get(i).getZj() * discount;
         }
-        return ApiResult.SUCCESS("总价："+hjjg);
+        return ApiResult.SUCCESS(hjjg);
     }
 
     @ApiOperation(value = "保存数据")

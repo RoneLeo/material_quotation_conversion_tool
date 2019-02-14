@@ -130,7 +130,6 @@ public class ExcelImportUtils {
                 errorMsg += br + "第" + (r + 1) + "行数据有问题，请仔细检查！";
                 continue;
             }
-
             //循环Excel的列
             for (int c = 0; c < totalCells; c++) {
                 Cell cell = row.getCell(c);
