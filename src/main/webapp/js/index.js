@@ -2,7 +2,7 @@
  * Created by liurong on 2019/2/13.
  */
 console.log(document.getElementsByTagName('body'))
-var ServerUrl = 'http://182.151.22.247:8088';
+var ServerUrl = 'http://182.151.22.247:8089';
 var selectedId, discountNum, xmmc, file;
 $(function () {
     getAllProject();
@@ -88,8 +88,8 @@ function getAllProject() {
         var projectTableHtml = '';
         if(projects && projects.length) {
             projects.forEach(function (item) {
-                selectGroupHtml += '<option value="'+ item.id + '">' + item.xmmc + '</option>';
-                projectTableHtml += '<tr> <td>' + item.xmmc + '</td><td><input type="button" value="删除" class="del-btn" data-index="' + item.id + '"></input></td></tr>';
+                selectGroupHtml += '<option value="'+ item.id + '">' + item.wzxmmc + '</option>';
+                projectTableHtml += '<tr> <td>' + item.wzxmmc + '</td><td><input type="button" value="删除" class="del-btn" data-index="' + item.id + '"></input></td></tr>';
             })
         }
         $('#selectGroup').html(selectGroupHtml);
