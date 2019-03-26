@@ -46,16 +46,23 @@ INPUT[type="button"]
 .header {
     background: url("../img/22.png");
     width: 60%;
+    height: 150px;
     margin: 10px auto;
-    /*margin-top: 3px;*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .header>div {
-    font-size: 32px;
-    line-height: 130px;
-    font-weight: 500;
+    font-size: 34px;
+    font-weight: 600;
     letter-spacing: 3px;
-    color: #560066;
-    text-align: center;
+    /*color: #560066;*/
+    /*color: #FF1C00;*/
+    color: #00B07B;
+    text-shadow: 2px 2px 10px RGBA(0, 176, 123, .2);
+}
+.header>div:hover {
+    text-shadow: 2px 2px 10px RGBA(0, 176, 123, .4);
 }
 a.am-btn-default:visited {
     color: #fff;

@@ -2,7 +2,7 @@
  * Created by liurong on 2019/2/13.
  */
 console.log(document.getElementsByTagName('body'))
-var ServerUrl = 'http://182.151.22.247:8089';
+var ServerUrl = 'http://182.151.22.247:9007';
 var selectedId, discountNum, xmmc, file;
 $(function () {
     getAllProject();
