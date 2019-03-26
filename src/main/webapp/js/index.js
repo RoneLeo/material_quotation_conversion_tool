@@ -70,7 +70,7 @@ function importProject() {
 }
 function getExportFile() {
     console.log(selectedId, discountNum);
-    $('#result-href').attr("href",ServerUrl + '/conbersiontool/exportExcel?xmbh=' + selectedId + '&discount=' + discountNum);
+    $('#result-href').attr("href",ServerUrl + '/conbersiontool/getexcelnew?id=' + selectedId + '&index=' + discountNum);
 }
 function projectChange(){
     var objS = document.getElementById("selectGroup");
