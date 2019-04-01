@@ -157,9 +157,12 @@ public class ExportExcelNew {
                 for (int j = 0; j < data.size(); j++) {        //将数据添加到单元格中
                     sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, j, j));
                     cell = row.createCell(j);
-                    if (j == 0 || j == 4 || j == 5 || j == 6) {
+                    if (j == 0 || j == 4 || j == 5) {
                         cell.setCellValue(Double.valueOf(data.get(j) + ""));
 
+                    } else if (j == 6) {
+                        cell.setCellFormula("E" + (rowNum + 1) + "*" + "F" + (rowNum + 1));
+                        cell.setCellType(Cell.CELL_TYPE_FORMULA);
                     } else {
                         cell.setCellValue("" + data.get(j) + "");
                     }
@@ -184,7 +187,7 @@ public class ExportExcelNew {
             cell = row.createCell(5);
             cell.setCellStyle(cellStyle);
             cell = row.createCell(6);
-            cell.setCellValue(String.valueOf(sum));
+            cell.setCellFormula("sum(G3:G" + (2 + i) + ")");
             cell.setCellStyle(cellStyle);
             row = sheet.createRow(3 + i);
             row.setHeight((short) (228 * 2));
@@ -204,7 +207,7 @@ public class ExportExcelNew {
             cell = row.createCell(5);
             cell.setCellStyle(cellStyle);
             cell = row.createCell(6);
-            cell.setCellValue(String.valueOf(projectEntity.getYsf().setScale(2, BigDecimal.ROUND_DOWN)));
+            cell.setCellValue(Double.valueOf(String.valueOf(projectEntity.getYsf().setScale(2, BigDecimal.ROUND_DOWN))));
             cell.setCellStyle(cellStyle);
             row = sheet.createRow(4 + i);
             row.setHeight((short) (228 * 2));
@@ -225,6 +228,7 @@ public class ExportExcelNew {
             cell.setCellStyle(cellStyle);
             cell = row.createCell(6);
             cell.setCellValue(String.valueOf(sum.add(projectEntity.getYsf()).setScale(2, BigDecimal.ROUND_DOWN)));
+            cell.setCellFormula("sum(G" + (3 + i) + ":G" + (4 + i) + ")");
             cell.setCellStyle(cellStyle);
             row = sheet.createRow(5 + i);
             row.setHeight((short) (228 * 4));
