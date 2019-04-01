@@ -3,14 +3,23 @@ package com.chiyun.material_quotation_conversion_tool.entity;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
 @Table(name = "project", schema = "mqct")
 public class ProjectEntity {
     private int id;
+    @ApiModelProperty(value = "外在项目名称")
+    private String wzxmmc;
     @ApiModelProperty(value = "项目名称")
     private String xmmc;
+    @ApiModelProperty(value = "备注")
+    private String bz;
+    @ApiModelProperty(value = "报价单位")
+    private String bjdw;
+    @ApiModelProperty(value = "运输费")
+    private BigDecimal ysf;
 
     @Id
     @Column(name = "id")
@@ -24,6 +33,16 @@ public class ProjectEntity {
     }
 
     @Basic
+    @Column(name = "out_name")
+    public String getWzxmmc() {
+        return wzxmmc;
+    }
+
+    public void setWzxmmc(String wzxmmc) {
+        this.wzxmmc = wzxmmc;
+    }
+
+    @Basic
     @Column(name = "name")
     public String getXmmc() {
         return xmmc;
@@ -31,6 +50,36 @@ public class ProjectEntity {
 
     public void setXmmc(String xmmc) {
         this.xmmc = xmmc;
+    }
+
+    @Basic
+    @Column(name = "remark")
+    public String getBz() {
+        return bz;
+    }
+
+    public void setBz(String bz) {
+        this.bz = bz;
+    }
+
+    @Basic
+    @Column(name = "quotation_unit")
+    public String getBjdw() {
+        return bjdw;
+    }
+
+    public void setBjdw(String bjdw) {
+        this.bjdw = bjdw;
+    }
+
+    @Basic
+    @Column(name = "transport_money")
+    public BigDecimal getYsf() {
+        return ysf;
+    }
+
+    public void setYsf(BigDecimal ysf) {
+        this.ysf = ysf;
     }
 
     @Override

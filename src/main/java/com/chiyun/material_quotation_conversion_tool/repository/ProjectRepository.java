@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import javax.transaction.Transactional;
 import java.util.List;
 
-public interface ProjectRepository extends CrudRepository<ProjectEntity, String> {
+public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
     // 通过id删除
     @Query(value = "delete from project where id = ?1", nativeQuery = true)
     @Modifying
@@ -20,5 +20,7 @@ public interface ProjectRepository extends CrudRepository<ProjectEntity, String>
 
     //查询全部数据
     List<ProjectEntity> findAll();
+
+    List<ProjectEntity> findAllByOrderByIdDesc();
 
 }

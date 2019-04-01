@@ -3,6 +3,7 @@ package com.chiyun.material_quotation_conversion_tool.utils;
 import com.chiyun.material_quotation_conversion_tool.common.ApiResult;
 import com.chiyun.material_quotation_conversion_tool.controller.ExcelDataController;
 import com.chiyun.material_quotation_conversion_tool.entity.ExcelDataEntity;
+import com.chiyun.material_quotation_conversion_tool.entity.ProjectEntity;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -56,7 +57,7 @@ public class ExcelImportUtils {
      * @param mfile
      * @return
      */
-    public static ApiResult batchImport(Integer xmbh, String fileName, MultipartFile mfile, ExcelDataController excelDataController) {
+    public static ApiResult batchImport(String wzxmmc, String fileName, MultipartFile mfile, ExcelDataController excelDataController) {
 
         File uploadDir = new File("C:\\fileupload");
         //创建一个目录 （它的路径名由当前 File 对象指定，包括任一必须的父路径。）
@@ -81,7 +82,7 @@ public class ExcelImportUtils {
                 wb = new HSSFWorkbook(is);
             }
             //根据excel里面的内容读取知识库信息
-            return readExcelValue(xmbh, wb, tempFile, excelDataController);
+            return readExcelValue(wzxmmc, wb, tempFile, excelDataController);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -94,7 +95,7 @@ public class ExcelImportUtils {
                 }
             }
         }
-        return ApiResult.FAILURE("导入出错！请检查数据格式！");
+        return ApiResult.FAILURE("导入出错！请检   查数据格式！");
     }
 
 
@@ -104,7 +105,7 @@ public class ExcelImportUtils {
      * @param wb
      * @return
      */
-    private static ApiResult readExcelValue(Integer xmbh,Workbook wb, File tempFile, ExcelDataController excelDataController) throws ParseException {
+    private static ApiResult readExcelValue(String wzxmmc, Workbook wb, File tempFile, ExcelDataController excelDataController) throws ParseException {
         //导入数据数量
         int sj=0;
         //错误信息接收器
@@ -123,19 +124,52 @@ public class ExcelImportUtils {
         String br = "<br/>";
 
         boolean flag=true;
+        ProjectEntity projectEntity = new ProjectEntity();
+        projectEntity.setWzxmmc(wzxmmc);
+        projectEntity = excelDataController.saveproject(projectEntity);
+        int sfbz = 0;
         //循环Excel行数,从第三行开始。标题不入库
-        for (int r = 2; r < totalRows; r++) {
+        for (int r = 0; r < totalRows; r++) {
             ExcelDataEntity excelDataEntity = new ExcelDataEntity();
             Row row = sheet1.getRow(r);
-            if (row == null) {
+            if (row == null || StringUtils.isRowEmpty(row)) {
                 errorMsg += br + "第" + (r + 1) + "行数据有问题，请仔细检查！";
+                continue;
+            }
+            //存项目名称
+            if(r == 0){
+                projectEntity.setXmmc(row.getCell(0).getStringCellValue());
+                projectEntity = excelDataController.saveproject(projectEntity);
+                continue;
+            } else if (r == 1) {
                 continue;
             }
             //循环Excel的列
             for (int c = 0; c < totalCells; c++) {
                 Cell cell = row.getCell(c);
-                    if (c == 1) {
+                if (c == 0) {
+                    try {
+                        double d = cell.getNumericCellValue();
+                    } catch (Exception e) {
+                        sfbz++;
+                        if (sfbz == 1) {
+                            projectEntity.setBz(cell.getStringCellValue());
+                            projectEntity = excelDataController.saveproject(projectEntity);
+                        } else if (sfbz == 2) {
+                            projectEntity.setBjdw(cell.getStringCellValue());
+                            projectEntity = excelDataController.saveproject(projectEntity);
+                        }
+                        break;
+                    }
+                } else if (c == 1) {
+                    String str = cell.getStringCellValue();
+                    if (str.equals("运输费")) {
+                        projectEntity.setYsf(BigDecimal.valueOf(row.getCell(6).getNumericCellValue()));
+                        projectEntity = excelDataController.saveproject(projectEntity);
+                        break;
+                    } else {
                         excelDataEntity.setHwmc(cell.getStringCellValue());
+                    }
                 } else if (c == 2) {
                         excelDataEntity.setXhgg(cell.getStringCellValue());
                 }else if (c == 3) {
@@ -143,8 +177,9 @@ public class ExcelImportUtils {
                         if(cell.getStringCellValue().isEmpty()){
                            // System.out.print("1111111");
                             flag=false;
-                            break;
+                            continue;
                         }
+                        flag=true;
                         excelDataEntity.setHwdw(cell.getStringCellValue());
                     }else if (c == 4) {
                         excelDataEntity.setSl((int) cell.getNumericCellValue());
@@ -154,11 +189,11 @@ public class ExcelImportUtils {
                         excelDataEntity.setZj(BigDecimal.valueOf(cell.getNumericCellValue()));
                     }
             }
-            if (flag==false){
+            if (!flag){
                 //System.out.print("22222222");
-                break;
+                continue;
             }
-            excelDataEntity.setXmbh(xmbh);
+            excelDataEntity.setXmbh(projectEntity.getId());
             excelDataEntity.setCjsj(new Date());
             ApiResult result = null;
                 result = excelDataController.doSave(excelDataEntity);
