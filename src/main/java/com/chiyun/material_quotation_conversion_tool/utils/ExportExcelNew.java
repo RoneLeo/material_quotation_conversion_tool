@@ -138,7 +138,7 @@ public class ExportExcelNew {
             cell.setCellStyle(cellStyle);
             //-------------------------表头end---------------------
             int i = 0;
-            BigDecimal sum = new BigDecimal(0);
+//            BigDecimal sum = new BigDecimal(0);
 //            double sum = 0;
             for (; i < dataset.size(); i++) {    //向表格插入数据
                 List<Object> data = new ArrayList<>();        //将前台传来的数据存入到list中
@@ -150,7 +150,7 @@ public class ExportExcelNew {
                 data.add(entity.getSl());
                 data.add(entity.getDj().multiply(index).setScale(2, BigDecimal.ROUND_DOWN));
                 data.add(index.multiply(entity.getZj()).setScale(2, BigDecimal.ROUND_DOWN));
-                sum = index.multiply(entity.getZj()).add(sum).setScale(2, BigDecimal.ROUND_DOWN);
+//                sum = index.multiply(entity.getZj()).add(sum).setScale(2, BigDecimal.ROUND_DOWN);
                 int rowNum = 2 + i;    //从第三行开始
                 row = sheet.createRow(rowNum);
                 row.setHeight((short) (228 * 2));
@@ -227,7 +227,7 @@ public class ExportExcelNew {
             cell = row.createCell(5);
             cell.setCellStyle(cellStyle);
             cell = row.createCell(6);
-            cell.setCellValue(String.valueOf(sum.add(projectEntity.getYsf()).setScale(2, BigDecimal.ROUND_DOWN)));
+//            cell.setCellValue(String.valueOf(sum.add(projectEntity.getYsf()).setScale(2, BigDecimal.ROUND_DOWN)));
             cell.setCellFormula("sum(G" + (3 + i) + ":G" + (4 + i) + ")");
             cell.setCellStyle(cellStyle);
             row = sheet.createRow(5 + i);

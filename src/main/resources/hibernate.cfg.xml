@@ -8,6 +8,9 @@
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
     <mapping class="com.chiyun.material_quotation_conversion_tool.entity.ExcelDataEntity"/>
     <mapping class="com.chiyun.material_quotation_conversion_tool.entity.ProjectEntity"/>
+    <mapping class="com.chiyun.material_quotation_conversion_tool.entity.MaterialdataEntity"/>
+    <mapping class="com.chiyun.material_quotation_conversion_tool.entity.ProMatePriceEntity"/>
+    <mapping class="com.chiyun.material_quotation_conversion_tool.entity.ProvinceEntity"/>
     <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 

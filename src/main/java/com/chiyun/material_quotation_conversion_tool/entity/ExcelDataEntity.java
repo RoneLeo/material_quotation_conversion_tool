@@ -22,9 +22,9 @@ public class ExcelDataEntity {
     private String hwdw;
     @ApiModelProperty(value = "数量")
     private int sl;
-    @ApiModelProperty(value = "单价")
+    @ApiModelProperty(value = "指导价")
     private BigDecimal dj;
-    @ApiModelProperty(value = "总价")
+    @ApiModelProperty(value = "成本价")
     private BigDecimal zj;
     @ApiModelProperty(value = "创建时间")
     private Date cjsj;
@@ -112,6 +112,7 @@ public class ExcelDataEntity {
     public void setZj(BigDecimal zj) {
         this.zj = zj;
     }
+
     @Basic
     @Column(name = "remark")
     public String getBz() {

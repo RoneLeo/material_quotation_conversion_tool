@@ -35,7 +35,7 @@ public class ExcelDataController {
 
     @ApiOperation(value = "导入excel数据")
     @RequestMapping("importExcel")
-    public ApiResult<Object> importExcel(String xmmc, @RequestParam(value = "file") MultipartFile file){
+    public ApiResult<Object> importExcel(String xmmc, @RequestParam(value = "file") MultipartFile file) {
         //判断文件是否为空
         if (file == null) {
             return ApiResult.FAILURE("文件不能为空");
@@ -54,8 +54,8 @@ public class ExcelDataController {
         if (StringUtils.isEmpty(fileName) || size == 0) {
             return ApiResult.FAILURE("文件不能为空");
         }
-        if(xmmc.isEmpty()){
-            xmmc=fileName;
+        if (xmmc.isEmpty()) {
+            xmmc = fileName;
         }
 //        ProjectEntity projectEntity=new ProjectEntity();
 //        if(xmmc.isEmpty()){
@@ -68,7 +68,7 @@ public class ExcelDataController {
 //            return ApiResult.FAILURE("添加项目失败");
 //        }
         //批量导入
-        ApiResult message = ExcelImportUtils.batchImport(xmmc,fileName, file, this);
+        ApiResult message = ExcelImportUtils.batchImport(xmmc, fileName, file, this);
         return message;
     }
 
@@ -122,25 +122,25 @@ public class ExcelDataController {
     @ApiOperation(value = "折算后的总价")
     @RequestMapping("discount")
     public ApiResult<Object> discount(Integer xmbh, BigDecimal discount) {
-        List<ExcelDataEntity> excelDataEntity=excelDataRepository.findByXmbh(xmbh);
-        if(excelDataEntity.isEmpty()){
+        List<ExcelDataEntity> excelDataEntity = excelDataRepository.findByXmbh(xmbh);
+        if (excelDataEntity.isEmpty()) {
             return ApiResult.FAILURE("不存在该项目的数据");
         }
         BigDecimal hjjg = new BigDecimal(0);
-        for(int i=0;i<excelDataEntity.size();i++){
-            hjjg=excelDataEntity.get(i).getZj().multiply(discount).add(hjjg);
-                //System.out.print("2222222："+hjjg);
+        for (int i = 0; i < excelDataEntity.size(); i++) {
+            hjjg = excelDataEntity.get(i).getZj().multiply(discount).add(hjjg);
+            //System.out.print("2222222："+hjjg);
         }
         return ApiResult.SUCCESS(hjjg);
     }
 
     @ApiOperation(value = "保存数据")
     @RequestMapping("doSave")
-    public ApiResult<Object> doSave(ExcelDataEntity excelDataEntity){
-        try{
+    public ApiResult<Object> doSave(ExcelDataEntity excelDataEntity) {
+        try {
             ExcelDataEntity entity = excelDataRepository.save(excelDataEntity);
             return ApiResult.SUCCESS();
-        }catch (Exception e){
+        } catch (Exception e) {
             return ApiResult.FAILURE();
         }
     }
@@ -149,7 +149,7 @@ public class ExcelDataController {
     @RequestMapping("/getexcelnew")
     public void getexcelnew(int id, BigDecimal index, HttpServletResponse response) throws IOException {
         ProjectEntity projectEntity = projectRepository.findById(id);
-        if (projectEntity==null) {
+        if (projectEntity == null) {
             MessageUtils.resultMsg(response, ApiResult.FAILURE("没有数据"));
             return;
         }
