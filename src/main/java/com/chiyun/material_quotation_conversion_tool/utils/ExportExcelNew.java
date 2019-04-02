@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ExportExcelNew {
-    public static void exportEXL(ProjectEntity projectEntity, String fileName, List<ExcelDataEntity> dataset, HttpServletResponse response, BigDecimal index) {
+    public static void exportEXL(ProjectEntity projectEntity, String fileName, List<Map<String, Object>> dataset, HttpServletResponse response, BigDecimal index, int lx) {
         try {
             String dateType = "yyyy";
             // 创建HSSFWorkbook对象(excel的文档对象)
@@ -142,14 +142,20 @@ public class ExportExcelNew {
 //            double sum = 0;
             for (; i < dataset.size(); i++) {    //向表格插入数据
                 List<Object> data = new ArrayList<>();        //将前台传来的数据存入到list中
-                ExcelDataEntity entity = dataset.get(i);
+                Map<String, Object> entity = dataset.get(i);
                 data.add(i + 1);
-                data.add(entity.getHwmc());
-                data.add(entity.getXhgg());
-                data.add(entity.getHwdw());
-                data.add(entity.getSl());
-                data.add(entity.getDj().multiply(index).setScale(2, BigDecimal.ROUND_DOWN));
-                data.add(index.multiply(entity.getZj()).setScale(2, BigDecimal.ROUND_DOWN));
+                data.add(entity.get("mc"));
+                data.add(entity.get("gg"));
+                data.add(entity.get("dw"));
+                data.add(entity.get("sl"));
+                if (lx == 0) {
+                    data.add(((BigDecimal) entity.get("jj")).multiply(index).setScale(2, BigDecimal.ROUND_DOWN));
+                } else if (lx == 1) {
+                    data.add(entity.get("jj"));
+                } else {
+                    data.add(entity.get("cbj"));
+                }
+                data.add(0);
 //                sum = index.multiply(entity.getZj()).add(sum).setScale(2, BigDecimal.ROUND_DOWN);
                 int rowNum = 2 + i;    //从第三行开始
                 row = sheet.createRow(rowNum);
@@ -216,6 +222,26 @@ public class ExportExcelNew {
             cell.setCellStyle(cellStyle);
             sheet.addMergedRegion(new CellRangeAddress(4 + i, 4 + i, 1, 5));
             cell = row.createCell(1);
+            cell.setCellValue("第三方检测费");
+            cell.setCellStyle(cellStyle);
+            cell = row.createCell(2);
+            cell.setCellStyle(cellStyle);
+            cell = row.createCell(3);
+            cell.setCellStyle(cellStyle);
+            cell = row.createCell(4);
+            cell.setCellStyle(cellStyle);
+            cell = row.createCell(5);
+            cell.setCellStyle(cellStyle);
+            cell = row.createCell(6);
+            cell.setCellValue(Double.valueOf(String.valueOf(projectEntity.getJcf().setScale(2, BigDecimal.ROUND_DOWN))));
+            cell.setCellStyle(cellStyle);
+            row = sheet.createRow(5 + i);
+            row.setHeight((short) (228 * 2));
+            cell = row.createCell(0);
+            cell.setCellValue(i + 4);
+            cell.setCellStyle(cellStyle);
+            sheet.addMergedRegion(new CellRangeAddress(5 + i, 5 + i, 1, 5));
+            cell = row.createCell(1);
             cell.setCellValue("总价");
             cell.setCellStyle(cellStyle);
             cell = row.createCell(2);
@@ -228,12 +254,12 @@ public class ExportExcelNew {
             cell.setCellStyle(cellStyle);
             cell = row.createCell(6);
 //            cell.setCellValue(String.valueOf(sum.add(projectEntity.getYsf()).setScale(2, BigDecimal.ROUND_DOWN)));
-            cell.setCellFormula("sum(G" + (3 + i) + ":G" + (4 + i) + ")");
+            cell.setCellFormula("sum(G" + (3 + i) + ":G" + (5 + i) + ")");
             cell.setCellStyle(cellStyle);
-            row = sheet.createRow(5 + i);
+            row = sheet.createRow(6 + i);
             row.setHeight((short) (228 * 4));
             cell = row.createCell(0);
-            sheet.addMergedRegion(new CellRangeAddress(5 + i, 5 + i, 0, 6));
+            sheet.addMergedRegion(new CellRangeAddress(6 + i, 6 + i, 0, 6));
             // 设置单元格内容
             cell.setCellValue(projectEntity.getBz());
             cell.setCellStyle(cellStyle2);
@@ -249,10 +275,10 @@ public class ExportExcelNew {
             cell.setCellStyle(cellStyle);
             cell = row.createCell(6);
             cell.setCellStyle(cellStyle);
-            row = sheet.createRow(6 + i);
+            row = sheet.createRow(7 + i);
             row.setHeight((short) (228 * 2));
             cell = row.createCell(0);
-            sheet.addMergedRegion(new CellRangeAddress(6 + i, 6 + i, 0, 6));
+            sheet.addMergedRegion(new CellRangeAddress(7 + i, 7 + i, 0, 6));
             // 设置单元格内容
             cell.setCellValue(projectEntity.getBjdw());
             cell.setCellStyle(cellStyle);

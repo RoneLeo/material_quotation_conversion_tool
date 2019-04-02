@@ -1,6 +1,7 @@
 package com.chiyun.material_quotation_conversion_tool.entity;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -12,8 +13,8 @@ import java.util.Objects;
 public class ProMatePriceEntity {
     private int sfid;
     private int clid;
-    private Double jj;
-    private Double cbj;
+    private BigDecimal jj;
+    private BigDecimal cbj;
 
     @Id
     @Column(name = "pid")
@@ -37,21 +38,21 @@ public class ProMatePriceEntity {
 
     @Basic
     @Column(name = "baseprice")
-    public Double getJj() {
+    public BigDecimal getJj() {
         return jj;
     }
 
-    public void setJj(Double jj) {
+    public void setJj(BigDecimal jj) {
         this.jj = jj;
     }
 
     @Basic
     @Column(name = "costprice")
-    public Double getCbj() {
+    public BigDecimal getCbj() {
         return cbj;
     }
 
-    public void setCbj(Double cbj) {
+    public void setCbj(BigDecimal cbj) {
         this.cbj = cbj;
     }
 

@@ -1,11 +1,15 @@
 package com.chiyun.material_quotation_conversion_tool.controller;
 
 import com.chiyun.material_quotation_conversion_tool.common.ApiResult;
+import com.chiyun.material_quotation_conversion_tool.common.MustLogin;
+import com.chiyun.material_quotation_conversion_tool.common.SessionHelper;
 import com.chiyun.material_quotation_conversion_tool.entity.ProjectEntity;
+import com.chiyun.material_quotation_conversion_tool.entity.UserEntity;
 import com.chiyun.material_quotation_conversion_tool.repository.ExcelDataRepository;
 import com.chiyun.material_quotation_conversion_tool.repository.ProjectRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.catalina.User;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,37 +29,49 @@ public class ProjectController {
 
     @ApiOperation(value = "添加项目")
     @RequestMapping("add")
-    public ApiResult<Object> add(ProjectEntity projectEntity){
-        ProjectEntity save = projectRepository.save(projectEntity);
-        if(save==null){
+    @MustLogin(rolerequired = {0})
+    public ApiResult<Object> add(ProjectEntity projectEntity) {
+        UserEntity userEntity = SessionHelper.getuser();
+        projectEntity.setUid(userEntity.getId());
+        try {
+            projectRepository.save(projectEntity);
+            return ApiResult.SUCCESS(projectEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
             return ApiResult.FAILURE("添加失败");
         }
-        return ApiResult.SUCCESS(save);
     }
 
     @ApiOperation(value = "删除项目")
     @RequestMapping("del")
-    public ApiResult<Object> del(Integer id){
-        int excelResult=excelDataRepository.deleteByXmbh(id);
-        if (excelResult == 1) {
-            return ApiResult.FAILURE("excel数据删除失败");
+    @MustLogin(rolerequired = {0})
+    public ApiResult<Object> del(Integer id) {
+        ProjectEntity projectEntity = projectRepository.findById(id);
+        if (projectEntity == null) {
+            return ApiResult.FAILURE("该项目不存在");
         }
-        int projectResult = projectRepository.deleteById(id);
-        if (projectResult == 1) {
-            return ApiResult.FAILURE("项目删除失败");
+        UserEntity userEntity = SessionHelper.getuser();
+        if (!userEntity.getId().equals(projectEntity.getUid()) && userEntity.getJs() != 1) {
+            return ApiResult.FAILURE("没有删除权限");
+        } else {
+            try {
+                projectRepository.delete(projectEntity);
+                return ApiResult.SUCCESS();
+            } catch (Exception e) {
+                return ApiResult.FAILURE("删除失败");
+            }
         }
-        return ApiResult.SUCCESS("删除成功");
     }
 
     @ApiOperation(value = "修改项目")
     @RequestMapping("update")
-    public ApiResult<Object> update(ProjectEntity projectEntity){
-        ProjectEntity isExist=projectRepository.findById(projectEntity.getId());
-        if (isExist == null){
+    public ApiResult<Object> update(ProjectEntity projectEntity) {
+        ProjectEntity isExist = projectRepository.findById(projectEntity.getId());
+        if (isExist == null) {
             return ApiResult.FAILURE("该项目不存在");
         }
         ProjectEntity result = projectRepository.save(projectEntity);
-        if(result==null){
+        if (result == null) {
             return ApiResult.FAILURE("修改失败");
         }
         return ApiResult.SUCCESS("修改成功");
@@ -63,22 +79,30 @@ public class ProjectController {
 
     @ApiOperation(value = "查詢项目")
     @RequestMapping("findAll")
-    public ApiResult<Object> findAll(){
-        List<ProjectEntity> result = projectRepository.findAll();
+    @MustLogin(rolerequired = {0})
+    public ApiResult<Object> findAll() {
+        UserEntity userEntity = SessionHelper.getuser();
+        List<ProjectEntity> result;
+        if (userEntity.getJs() == 1) {
+            result = projectRepository.findAll();
+        } else {
+            result = projectRepository.findAllByUid(userEntity.getId());
+        }
         return ApiResult.SUCCESS(result);
     }
 
     @ApiOperation(value = "通过id查詢项目")
     @RequestMapping("findById")
-    public ApiResult<Object> findById(Integer id){
+    @Deprecated
+    public ApiResult<Object> findById(Integer id) {
         ProjectEntity result = projectRepository.findById(id);
-        if(result==null){
+        if (result == null) {
             return ApiResult.FAILURE("该项目不存在");
         }
         return ApiResult.SUCCESS(result);
     }
 
-    public ProjectEntity add1(ProjectEntity projectEntity){
+    public ProjectEntity add1(ProjectEntity projectEntity) {
         ProjectEntity save = projectRepository.save(projectEntity);
         return save;
     }

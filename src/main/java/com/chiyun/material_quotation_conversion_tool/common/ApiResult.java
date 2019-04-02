@@ -41,6 +41,13 @@ public class ApiResult<T> implements Serializable {
         return result;
     }
 
+    public static ApiResult<Object> TimeDown() {
+        ApiResult<Object> result = new ApiResult<>();
+        result.setResCode(101);
+        result.setResMsg("登录时限已过，请充值");
+        return result;
+    }
+
 
     public ApiResult(int resCode) {
         this.resCode = resCode;
