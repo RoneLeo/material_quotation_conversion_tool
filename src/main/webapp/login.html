@@ -19,9 +19,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image:url('./img/login.jpg');
-            background-size:cover;
+            background-image: url('./img/login.jpg');
+            background-size: cover;
         }
+
         .main-wrapper {
             position: relative;
             width: 90%;
@@ -31,6 +32,7 @@
             align-items: center;
             margin-top: -30px;
         }
+
         .header {
             display: flex;
             flex-direction: column;
@@ -38,6 +40,7 @@
             align-items: center;
             min-width: 620px;
         }
+
         .title {
             font-size: 34px;
             color: #f1f1f1;
@@ -46,11 +49,13 @@
             border-bottom: 1px solid #f1f1f1;
             letter-spacing: 2px;
         }
+
         .subtitle {
             margin-top: 20px;
             font-size: 20px;
             color: #c1c1c1;
         }
+
         .login-form {
             margin-top: 20px;
             background-color: RGBA(6, 42, 122, .4);
@@ -62,20 +67,25 @@
             flex-direction: column;
             justify-content: center;
         }
+
         .am-form-group {
             margin-bottom: 10px;
         }
+
         .am-form-label {
             color: #f1f1f1;
         }
+
         .am-form-input {
             display: inline-block;
             width: auto;
         }
+
         .am-form-input input {
             outline: none;
             border: 0;
         }
+
         .am-btn {
             padding: 5px 20px;
         }
@@ -83,51 +93,73 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/amazeui.min.js"></script>
 </head>
-<body >
-    <div class="main-wrapper">
-        <div class="header">
-            <div class="title">防护/防化/通风设备厂商报价工具软件</div>
-            <div class="subtitle">Protection/Chemical/Ventilation Equipment Manufacturer Quotation Tool Software.</div>
-        </div>
-        <form class="am-form am-form-horizontal login-form" role="form">
-            <div class="am-form-group">
-                <label for="acount" class="am-form-label">账号：</label>
-                <div class="am-form-input">
-                    <input type="text" class="form-control" id="acount" placeholder="用户账号">
-                </div>
-            </div>
-            <div class="am-form-group">
-                <label for="password" class="am-form-label">密码：</label>
-                <div class="am-form-input">
-                    <input type="text" class="form-control" id="password" placeholder="用户密码">
-                </div>
-            </div>
-            <div class="am-form-group" style="text-align: center">
-                <button id="login-btn" type="button" class="am-btn am-btn-default">登录</button>
-            </div>
-        </form>
+<body>
+<div class="main-wrapper">
+    <div class="header">
+        <div class="title">防护/防化/通风设备厂商报价工具软件</div>
+        <div class="subtitle">Protection/Chemical/Ventilation Equipment Manufacturer Quotation Tool Software.</div>
     </div>
-    <script>
-        var ServerUrl = 'http://192.168.0.165:9007'
-        $(function () {
-            $('#login-btn').click(function () {
-                let acount = $('#acount').val();
-                let password = $('#password').val();
-                console.log(acount, password)
-                $.get(ServerUrl + '/user/login?zh=' + acount + '&mm=' + password, function (res) {
-                    if(res.resCode == 200) {
+    <form class="am-form am-form-horizontal login-form" role="form">
+        <div class="am-form-group">
+            <label for="acount" class="am-form-label">账号：</label>
+            <div class="am-form-input">
+                <input type="text" class="form-control" id="acount" placeholder="用户账号">
+            </div>
+        </div>
+        <div class="am-form-group">
+            <label for="password" class="am-form-label">密码：</label>
+            <div class="am-form-input">
+                <input type="text" class="form-control" id="password" placeholder="用户密码">
+            </div>
+        </div>
+        <div class="am-form-group" style="text-align: center">
+            <button id="login-btn" type="button" class="am-btn am-btn-default">登录</button>
+        </div>
+    </form>
+</div>
+<script>
+    var ServerUrl = 'http://192.168.0.165:9007'
+    $(function () {
+        $('#login-btn').click(function () {
+            let acount = $('#acount').val();
+            let password = $('#password').val();
+            console.log(acount, password)
+            $.ajax({
+                type: "GET",
+                url: ServerUrl + '/user/login?zh=' + acount + '&mm=' + password,
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+                xhrFields: {
+                    withCredentials: true
+                },
+                crossDomain: true,
+                success: function (res) {
+                    if (res.resCode == 200) {
                         localStorage.setItem("user", JSON.stringify(res.data));
                         let user = JSON.parse(localStorage.getItem("user"));
                         console.log(user)
-                        if(user) {
-                            window.location.href='index.html';
+                        if (user) {
+                            window.location.href = 'index.html';
                         }
-                    }else {
+                    } else {
                         alert(res.data.resMsg)
                     }
-                })
-            })
+                }
+            });
+            // $.get(ServerUrl + '/user/login?zh=' + acount + '&mm=' + password, function (res) {
+            //     if(res.resCode == 200) {
+            //         localStorage.setItem("user", JSON.stringify(res.data));
+            //         let user = JSON.parse(localStorage.getItem("user"));
+            //         console.log(user)
+            //         if(user) {
+            //             window.location.href='index.html';
+            //         }
+            //     }else {
+            //         alert(res.data.resMsg)
+            //     }
+            // })
         })
-    </script>
+    })
+</script>
 </body>
 </html>

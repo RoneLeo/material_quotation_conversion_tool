@@ -9,12 +9,12 @@ var selectedId, discountNum, xmmc, file;
 $(function () {
     let user = JSON.parse(localStorage.getItem("user"));
     console.log(user)
-    if(!user) {
-        window.location.href='login.html';
-    }else {
+    if (!user) {
+        window.location.href = 'login.html';
+    } else {
         getAllProject();
         getAllProvince();
-        $('#countBtn').click(function(){
+        $('#countBtn').click(function () {
             let value = $('#rate').val();
             if (value == '') {
                 value = 0;
@@ -49,7 +49,6 @@ $(function () {
 });
 
 
-
 function getTotalNum() {
     $.get(ServerUrl + '/conbersiontool/discount?xmbh=' + selectedId + '&discount=' + discountNum, function (data) {
         let price = data.data;
@@ -82,8 +81,8 @@ function importProject() {
 
 function getExportFile() {
     $('#discount-href').attr("href", ServerUrl + '/conbersiontool/getexcelnew?xmbh=' + selectedId + '&discount=' + discountNum + '&lx=0')
-    $('#baseprice-href').attr("href", ServerUrl + '/conbersiontool/getexcelnew?xmbh=' + selectedId + '&discount=' + discountNum + '&lx=1' );
-    $('#cost-href').attr("href", ServerUrl + '/conbersiontool/getexcelnew?xmbh=' + selectedId + '&discount=' + discountNum+ '&lx=2');
+    $('#baseprice-href').attr("href", ServerUrl + '/conbersiontool/getexcelnew?xmbh=' + selectedId + '&discount=' + discountNum + '&lx=1');
+    $('#cost-href').attr("href", ServerUrl + '/conbersiontool/getexcelnew?xmbh=' + selectedId + '&discount=' + discountNum + '&lx=2');
 
 }
 
@@ -108,6 +107,8 @@ function provinceChange() {
 }
 
 function getAllProvince() {
+
+
     $.get(ServerUrl + '/province/findAll', function (data) {
         var provinces = data.data;
         var selectProvinceHtml = '';
@@ -124,17 +125,40 @@ function getAllProvince() {
 }
 
 function getAllProject() {
-    $.get(ServerUrl + '/project/findAll', function (data) {
-        var projects = data.data;
-        var selectGroupHtml = '';
-        var projectTableHtml = '';
-        if (projects && projects.length) {
-            projects.forEach(function (item) {
-                selectGroupHtml += '<option value="' + item.id + '">' + item.wzxmmc + '</option>';
-                projectTableHtml += '<tr> <td>' + item.wzxmmc + '</td><td><input type="button" value="删除" class="del-btn" data-index="' + item.id + '"></input></td></tr>';
-            })
+    $.ajax({
+        type: "GET",
+        url: ServerUrl + '/project/findAll',
+        contentType: "application/json; charset=utf-8",
+        dataType: 'json',
+        xhrFields: {
+            withCredentials: true
+        },
+        crossDomain: true,
+        success: function (data) {
+            var projects = data.data;
+            var selectGroupHtml = '';
+            var projectTableHtml = '';
+            if (projects && projects.length) {
+                projects.forEach(function (item) {
+                    selectGroupHtml += '<option value="' + item.id + '">' + item.wzxmmc + '</option>';
+                    projectTableHtml += '<tr> <td>' + item.wzxmmc + '</td><td><input type="button" value="删除" class="del-btn" data-index="' + item.id + '"></input></td></tr>';
+                })
+            }
+            $('#selectGroup').html(selectGroupHtml);
+            $('#project-table tbody').html(projectTableHtml);
         }
-        $('#selectGroup').html(selectGroupHtml);
-        $('#project-table tbody').html(projectTableHtml);
-    })
+    });
+    // $.get(ServerUrl + '/project/findAll', function (data) {
+    //     var projects = data.data;
+    //     var selectGroupHtml = '';
+    //     var projectTableHtml = '';
+    //     if (projects && projects.length) {
+    //         projects.forEach(function (item) {
+    //             selectGroupHtml += '<option value="' + item.id + '">' + item.wzxmmc + '</option>';
+    //             projectTableHtml += '<tr> <td>' + item.wzxmmc + '</td><td><input type="button" value="删除" class="del-btn" data-index="' + item.id + '"></input></td></tr>';
+    //         })
+    //     }
+    //     $('#selectGroup').html(selectGroupHtml);
+    //     $('#project-table tbody').html(projectTableHtml);
+    // })
 }
