@@ -21,6 +21,8 @@ public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
     //查询全部数据
     List<ProjectEntity> findAll();
 
+    List<ProjectEntity> findAllByUid(String uid);
+
     List<ProjectEntity> findAllByOrderByIdDesc();
 
 }

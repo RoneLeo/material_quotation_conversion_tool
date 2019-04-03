@@ -10,5 +10,5 @@ import java.util.List;
  * Created by wazto on 2019/4/1.
  */
 public interface ProMatePriceRepository extends JpaRepository<ProMatePriceEntity, ProMatePriceEntityPK> {
-//    List<ProMatePriceEntity> findAllBySfid();
+    List<ProMatePriceEntity> findAllBySfid(Integer sfid);
 }

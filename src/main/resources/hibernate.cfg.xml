@@ -6,12 +6,13 @@
   <session-factory>
     <property name="connection.url">jdbc:mysql://182.151.22.247:3306/mqct</property>
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-    <mapping class="com.chiyun.material_quotation_conversion_tool.entity.ExcelDataEntity"/>
+      <mapping class="com.chiyun.material_quotation_conversion_tool.entity.ExcelDataEntity"/>
     <mapping class="com.chiyun.material_quotation_conversion_tool.entity.ProjectEntity"/>
     <mapping class="com.chiyun.material_quotation_conversion_tool.entity.MaterialdataEntity"/>
     <mapping class="com.chiyun.material_quotation_conversion_tool.entity.ProMatePriceEntity"/>
     <mapping class="com.chiyun.material_quotation_conversion_tool.entity.ProvinceEntity"/>
-    <!-- <property name="connection.username"/> -->
+      <mapping class="com.chiyun.material_quotation_conversion_tool.entity.UserEntity"/>
+      <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 
     <!-- DB schema will be updated if needed -->

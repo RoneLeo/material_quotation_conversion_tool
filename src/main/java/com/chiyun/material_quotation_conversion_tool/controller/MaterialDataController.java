@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by wazto on 2019/4/1.
@@ -28,7 +25,7 @@ public class MaterialDataController {
     @Resource
     private MaterialDataRepository materialDataRepository;
 
-    Map<String, MaterialdataEntity> entityMap = new HashMap<>();
+    private Map<String, MaterialdataEntity> entityMap = new HashMap<>();
 
     @ApiOperation("获取所有材料")
     @RequestMapping("/findAll")
@@ -66,5 +63,23 @@ public class MaterialDataController {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public void setEntityMap() {
+        entityMap.clear();
+        entityMap = new HashMap<>();
+        List<MaterialdataEntity> list = materialDataRepository.findAll();
+        for (MaterialdataEntity entity : list) {
+            entityMap.put(entity.getGg(), entity);
+        }
+    }
+
+    public MaterialdataEntity getMateByXh(String xh) {
+        if (entityMap == null || entityMap.isEmpty()) {
+            setEntityMap();
+        }
+        if (entityMap.containsKey(xh))
+            return entityMap.get(xh);
+        return null;
     }
 }

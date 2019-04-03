@@ -12,6 +12,8 @@ public class ProjectEntity {
     private int id;
     @ApiModelProperty(value = "外在项目名称")
     private String wzxmmc;
+    @ApiModelProperty(value = "用户id")
+    private String uid;
     @ApiModelProperty(value = "项目名称")
     private String xmmc;
     @ApiModelProperty(value = "备注")
@@ -20,6 +22,8 @@ public class ProjectEntity {
     private String bjdw;
     @ApiModelProperty(value = "运输费")
     private BigDecimal ysf;
+    @ApiModelProperty(value = "第三方检测费")
+    private BigDecimal jcf;
 
     @Id
     @Column(name = "id")
@@ -30,6 +34,16 @@ public class ProjectEntity {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Basic
+    @Column(name = "uid")
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     @Basic
@@ -80,6 +94,16 @@ public class ProjectEntity {
 
     public void setYsf(BigDecimal ysf) {
         this.ysf = ysf;
+    }
+
+    @Basic
+    @Column(name = "test_fee")
+    public BigDecimal getJcf() {
+        return jcf;
+    }
+
+    public void setJcf(BigDecimal jcf) {
+        this.jcf = jcf;
     }
 
     @Override
