@@ -27,6 +27,14 @@
     <div id="search" class="search">
         <span class="title">计算框</span>
         <form class="am-form am-form-horizontal" role="form">
+            <!--<div class="am-form-group">-->
+                <!--<label for="selectProvince" class="am-u-lg-2 am-u-md-3 am-u-sm-5 am-form-label">选择省份：</label>-->
+                <!--<div class="am-u-lg-10 am-u-md-9 am-u-sm-7">-->
+                    <!--<select id="selectProvince" data-am-selected="{btnWidth: '100%', btnSize: 'sm'}"-->
+                            <!--onchange="provinceChange()">-->
+                    <!--</select>-->
+                <!--</div>-->
+            <!--</div>-->
             <div class="am-form-group">
                 <label for="selectGroup" class="am-u-lg-2 am-u-md-3 am-u-sm-5 am-form-label">项目名称：</label>
                 <div class="am-u-lg-10 am-u-md-9 am-u-sm-7">
@@ -48,13 +56,18 @@
                 </div>
             </div>
         </form>
+        <div style="text-align: center;">
+            <button id="countBtn" style="padding: 3px 32px;font-size: 14px;background-color: #8D0685;border: 1px solid #8D0685;color: #ffffff;letter-spacing: 2px;outline: none;">查询</button>
+        </div>
     </div>
     <div id="result" class="result">
         <span class="title">结果框</span>
         <div class="am-g">
             <span class="result-num">
                 ￥<span id="price">0</span>
-                <a id="result-href">导出计算结果</a>
+                <a id="discount-href">导出折算表</a>
+                <a id="baseprice-href">导出基价表</a>
+                <a id="cost-href">导出成本表</a>
             </span>
         </div>
     </div>

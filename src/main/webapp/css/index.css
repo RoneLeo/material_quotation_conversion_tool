@@ -114,10 +114,13 @@ a.am-btn-default:visited {
 }
 .result .result-num a{
     font-size: 16px;
-    color: #8D0685;
+    color: #666;
     cursor: pointer;
     padding: 3px 15px;
     background-color: transparent;
+}
+.result .result-num a+a {
+    padding: 3px 5px;
 }
 .result .result-num a:hover {
     color: #560066;
