@@ -25,18 +25,14 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@Api(description = "折算工具")
-@RequestMapping(value = "/conbersiontool", method = {RequestMethod.GET, RequestMethod.POST})
+@Api(description = "项目数据")
+@RequestMapping(value = "/projectdata", method = {RequestMethod.GET, RequestMethod.POST})
 @RestController
 public class ExcelDataController {
     @Resource
     private ExcelDataRepository excelDataRepository;
     @Resource
-    private ProjectController projectController;
-    @Resource
     private ProjectRepository projectRepository;
-    @Resource
-    private ProMatePriceController proMatePriceController;
 
 
     @ApiOperation(value = "导入excel数据")
@@ -62,42 +58,32 @@ public class ExcelDataController {
         if (xmmc.isEmpty()) {
             xmmc = fileName;
         }
-//        ProjectEntity projectEntity=new ProjectEntity();
-//        if(xmmc.isEmpty()){
-//            projectEntity.setXmmc(fileName);
-//        }else{
-//            projectEntity.setXmmc(xmmc);
-//        }
-//        ProjectEntity projectEntity1 = projectController.add1(projectEntity);
-//        if(projectEntity1==null){
-//            return ApiResult.FAILURE("添加项目失败");
-//        }
         //批量导入
         ApiResult message = ExcelImportUtils.batchImport(xmmc, fileName, file, this, userEntity);
         return message;
     }
 
+    @ApiOperation(value = "查询项目已有材料")
+    @RequestMapping("findAllByXmbh")
+    @MustLogin(rolerequired = {0})
+    public ApiResult<Object> findAllByXmbh(@RequestParam @ApiParam("项目id") int xmbh) {
+        List<Map<String, Object>> list = excelDataRepository.findAllByXmbhAndSfid(xmbh);
+        return ApiResult.SUCCESS(list);
+    }
 
     @ApiOperation(value = "折算后的总价")
     @RequestMapping("discount")
     @MustLogin(rolerequired = {0})
     public ApiResult<Object> discount(@RequestParam @ApiParam("项目id") int xmbh,
                                       @RequestParam @ApiParam("折算比率") BigDecimal discount) {
-        UserEntity userEntity = SessionHelper.getuser();
-//        if (excelDataEntity.isEmpty()) {
-//            return ApiResult.FAILURE("不存在该项目的数据");
-//        }
         if (discount == null)
             discount = new BigDecimal(1);
         BigDecimal zsj = new BigDecimal(0);
         BigDecimal jj = new BigDecimal(0);
         BigDecimal cbj = new BigDecimal(0);
-//        for (ExcelDataEntity anExcelDataEntity : excelDataEntity) {
-//            hjjg = (anExcelDataEntity.getDj().multiply(discount).multiply(BigDecimal.valueOf(anExcelDataEntity.getSl()))).add(hjjg);
-//        }
-        List<Map<String, Object>> list = excelDataRepository.findAllByXmbhAndSfid(xmbh, userEntity.getSfid());
+        List<Map<String, Object>> list = excelDataRepository.findAllByXmbhAndSfid(xmbh);
         for (Map<String, Object> map : list) {
-            BigDecimal sl = BigDecimal.valueOf((Integer) map.get("sl"));
+            BigDecimal sl = BigDecimal.valueOf((Integer) map.get("clsl"));
             jj = ((BigDecimal) map.get("jj")).multiply(sl).add(jj);
             cbj = ((BigDecimal) map.get("cbj")).multiply(sl).add(cbj);
             zsj = ((BigDecimal) map.get("jj")).multiply(sl).multiply(discount).add(zsj);
@@ -109,13 +95,18 @@ public class ExcelDataController {
         return ApiResult.SUCCESS(map);
     }
 
-    @ApiOperation(value = "保存数据")
-    @RequestMapping("doSave")
+    @ApiOperation(value = "给项目添加材料")
+    @RequestMapping("addMaterial")
+    public ApiResult<Object> addMaterial(ExcelDataEntity excelDataEntity) {
+        return doSave(excelDataEntity);
+    }
+
     public ApiResult<Object> doSave(ExcelDataEntity excelDataEntity) {
         try {
-            ExcelDataEntity entity = excelDataRepository.save(excelDataEntity);
+            excelDataRepository.save(excelDataEntity);
             return ApiResult.SUCCESS();
         } catch (Exception e) {
+            e.printStackTrace();
             return ApiResult.FAILURE();
         }
     }
@@ -127,13 +118,12 @@ public class ExcelDataController {
     public void getexcelnew(@RequestParam @ApiParam("项目id") int xmbh,
                             @RequestParam @ApiParam("折算比率") BigDecimal discount,
                             @RequestParam @ApiParam("导出类型:0-折算价表，1-基价表，2-成本价表") int lx, HttpServletResponse response) throws IOException {
-        UserEntity userEntity = SessionHelper.getuser();
         ProjectEntity projectEntity = projectRepository.findById(xmbh);
         if (projectEntity == null) {
             MessageUtils.resultMsg(response, ApiResult.FAILURE("没有该项目信息"));
             return;
         }
-        List<Map<String, Object>> list = excelDataRepository.findAllByXmbhAndSfid(projectEntity.getId(), userEntity.getSfid());
+        List<Map<String, Object>> list = excelDataRepository.findAllByXmbhAndSfid(projectEntity.getId());
         if (list.isEmpty()) {
             MessageUtils.resultMsg(response, ApiResult.FAILURE("没有数据"));
             return;

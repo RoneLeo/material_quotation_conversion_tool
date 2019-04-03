@@ -1,36 +1,35 @@
 package com.chiyun.material_quotation_conversion_tool.entity;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Objects;
 
+/**
+ * Created by wazto on 2019/4/3.
+ */
 @Entity
 @Table(name = "excel_data", schema = "mqct")
+@ApiModel
 public class ExcelDataEntity {
+    @ApiModelProperty("材料id")
     private int id;
-    @ApiModelProperty(value = "项目编号")
+    @ApiModelProperty("项目id")
     private Integer xmbh;
-    @ApiModelProperty(value = "货物名称")
-    private String hwmc;
-    @ApiModelProperty(value = "型号规格")
-    private String xhgg;
-    @ApiModelProperty(value = "货物单位")
-    private String hwdw;
-    @ApiModelProperty(value = "数量")
-    private int sl;
-    @ApiModelProperty(value = "指导价")
-    private BigDecimal dj;
-    @ApiModelProperty(value = "成本价")
-    private BigDecimal zj;
-    @ApiModelProperty(value = "创建时间")
-    private Date cjsj;
-    @ApiModelProperty(value = "备注")
-    private String bz;
-
+    @ApiModelProperty("材料名称")
+    private String clmc;
+    @ApiModelProperty("材料规格")
+    private String clgg;
+    @ApiModelProperty("材料单位")
+    private String cldw;
+    @ApiModelProperty("材料数量")
+    private int clsl;
+    @ApiModelProperty("基价,添加与修改时不做处理")
+    private BigDecimal jj;
+    @ApiModelProperty("成本价,添加与修改时不做处理")
+    private BigDecimal cbj;
 
     @Id
     @Column(name = "id")
@@ -55,82 +54,62 @@ public class ExcelDataEntity {
 
     @Basic
     @Column(name = "goods_name")
-    public String getHwmc() {
-        return hwmc;
+    public String getClmc() {
+        return clmc;
     }
 
-    public void setHwmc(String hwmc) {
-        this.hwmc = hwmc;
+    public void setClmc(String clmc) {
+        this.clmc = clmc;
     }
 
     @Basic
     @Column(name = "goods_model")
-    public String getXhgg() {
-        return xhgg;
+    public String getClgg() {
+        return clgg;
     }
 
-    public void setXhgg(String xhgg) {
-        this.xhgg = xhgg;
+    public void setClgg(String clgg) {
+        this.clgg = clgg;
     }
 
     @Basic
     @Column(name = "goods_unit")
-    public String getHwdw() {
-        return hwdw;
+    public String getCldw() {
+        return cldw;
     }
 
-    public void setHwdw(String hwdw) {
-        this.hwdw = hwdw;
+    public void setCldw(String cldw) {
+        this.cldw = cldw;
     }
 
     @Basic
     @Column(name = "number")
-    public Integer getSl() {
-        return sl;
+    public int getClsl() {
+        return clsl;
     }
 
-    public void setSl(Integer sl) {
-        this.sl = sl;
+    public void setClsl(int clsl) {
+        this.clsl = clsl;
     }
 
     @Basic
     @Column(name = "price")
-    public BigDecimal getDj() {
-        return dj;
+    public BigDecimal getJj() {
+        return jj;
     }
 
-    public void setDj(BigDecimal dj) {
-        this.dj = dj;
+    public void setJj(BigDecimal jj) {
+        this.jj = jj;
     }
 
     @Basic
     @Column(name = "total")
-    public BigDecimal getZj() {
-        return zj;
+    public BigDecimal getCbj() {
+        return cbj;
     }
 
-    public void setZj(BigDecimal zj) {
-        this.zj = zj;
-    }
-
-    @Basic
-    @Column(name = "remark")
-    public String getBz() {
-        return bz;
-    }
-
-    public void setBz(String bz) {
-        this.bz = bz;
-    }
-
-    @Basic
-    @Column(name = "create_time")
-    public Date getCjsj() {
-        return cjsj;
-    }
-
-    public void setCjsj(Date cjsj) {
-        this.cjsj = cjsj;
+    public void setCbj(BigDecimal cbj) {
+        this.cbj = cbj;
     }
 
     @Override
@@ -139,20 +118,18 @@ public class ExcelDataEntity {
         if (o == null || getClass() != o.getClass()) return false;
         ExcelDataEntity that = (ExcelDataEntity) o;
         return id == that.id &&
+                clsl == that.clsl &&
                 Objects.equals(xmbh, that.xmbh) &&
-                Objects.equals(hwmc, that.hwmc) &&
-                Objects.equals(xhgg, that.xhgg) &&
-                Objects.equals(hwdw, that.hwdw) &&
-                Objects.equals(sl, that.sl) &&
-                Objects.equals(dj, that.dj) &&
-                Objects.equals(zj, that.zj) &&
-                Objects.equals(bz, that.bz) &&
-                Objects.equals(cjsj, that.cjsj);
+                Objects.equals(clmc, that.clmc) &&
+                Objects.equals(clgg, that.clgg) &&
+                Objects.equals(cldw, that.cldw) &&
+                Objects.equals(jj, that.jj) &&
+                Objects.equals(cbj, that.cbj);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, xmbh, hwmc, xhgg, hwdw, sl, dj, zj, bz, cjsj);
+        return Objects.hash(id, xmbh, clmc, clgg, cldw, clsl, jj, cbj);
     }
 }

@@ -71,7 +71,6 @@ public class UserController {
                 e.printStackTrace();
                 return ApiResult.FAILURE("密码加密失败");
             }
-            userEntity.setSfid(sfid == null ? 0 : sfid);
             userEntity.setJs(js == null ? 0 : js);
             try {
                 userRepository.save(userEntity);

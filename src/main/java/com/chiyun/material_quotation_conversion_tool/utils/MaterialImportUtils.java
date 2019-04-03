@@ -2,7 +2,9 @@ package com.chiyun.material_quotation_conversion_tool.utils;
 
 import com.chiyun.material_quotation_conversion_tool.common.ApiResult;
 import com.chiyun.material_quotation_conversion_tool.controller.ExcelDataController;
+import com.chiyun.material_quotation_conversion_tool.controller.MaterialDataController;
 import com.chiyun.material_quotation_conversion_tool.entity.ExcelDataEntity;
+import com.chiyun.material_quotation_conversion_tool.entity.MaterialdataEntity;
 import com.chiyun.material_quotation_conversion_tool.entity.ProjectEntity;
 import com.chiyun.material_quotation_conversion_tool.entity.UserEntity;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -22,7 +24,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ExcelImportUtils {
+public class MaterialImportUtils {
 
     static SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 
@@ -54,11 +56,10 @@ public class ExcelImportUtils {
     /**
      * 上传excel文件到临时目录后并开始解析
      *
-     * @param fileName
      * @param mfile
      * @return
      */
-    public static ApiResult batchImport(String wzxmmc, String fileName, MultipartFile mfile, ExcelDataController excelDataController, UserEntity userEntity) {
+    public static ApiResult batchImport(String fileName, MultipartFile mfile, MaterialDataController materialDataController, UserEntity userEntity) {
 
         File uploadDir = new File("C:\\fileupload");
         //创建一个目录 （它的路径名由当前 File 对象指定，包括任一必须的父路径。）
@@ -77,13 +78,13 @@ public class ExcelImportUtils {
             //根据版本选择创建Workbook的方式
             Workbook wb = null;
             //根据文件名判断文件是2003版本还是2007版本
-            if (ExcelImportUtils.isExcel2007(fileName)) {
+            if (MaterialImportUtils.isExcel2007(fileName)) {
                 wb = new XSSFWorkbook(is);
             } else {
                 wb = new HSSFWorkbook(is);
             }
             //根据excel里面的内容读取知识库信息
-            return readExcelValue(wzxmmc, wb, tempFile, excelDataController, userEntity);
+            return readExcelValue(wb, tempFile, materialDataController, userEntity);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -98,7 +99,7 @@ public class ExcelImportUtils {
         }
         if (r == 0 && c == 0)
             return ApiResult.FAILURE("导入出错！请检查数据格式！");
-        return ApiResult.FAILURE("第" + (r + 1) + "行" + (c + 1) + "列数据有问题，请仔细检查！");
+        return ApiResult.FAILURE("已导入" + sj + "条数据，" + "第" + (r + 1) + "行" + (c + 1) + "列数据有问题，已停止导入，请仔细检查！");
     }
 
     static int r = 0;
@@ -110,9 +111,11 @@ public class ExcelImportUtils {
      * @param wb
      * @return
      */
-    private static ApiResult readExcelValue(String wzxmmc, Workbook wb, File tempFile, ExcelDataController excelDataController, UserEntity userEntity) throws ParseException {
+    static int sj = 0;
+
+    private static ApiResult readExcelValue(Workbook wb, File tempFile, MaterialDataController materialDataController, UserEntity userEntity) throws ParseException {
         //导入数据数量
-        int sj = 0;
+
         //错误信息接收器
         StringBuilder errorMsg = new StringBuilder();
         //得到第一个shell
@@ -128,84 +131,36 @@ public class ExcelImportUtils {
 
         String br = "<br/>";
 
-        boolean flag = true;
-        ProjectEntity projectEntity = new ProjectEntity();
-        projectEntity.setWzxmmc(wzxmmc);
-        projectEntity.setUid(userEntity.getId());
-        projectEntity = excelDataController.saveproject(projectEntity);
         int sfbz = 0;
         //循环Excel行数,从第三行开始。标题不入库
-        for (r = 0; r < totalRows; r++) {
-            ExcelDataEntity excelDataEntity = new ExcelDataEntity();
+        for (r = 2; r < totalRows; r++) {
+            MaterialdataEntity materialdataEntity = new MaterialdataEntity();
             Row row = sheet1.getRow(r);
             if (row == null || StringUtils.isRowEmpty(row)) {
                 errorMsg.append(br).append("第").append(r + 1).append("行数据有问题，请仔细检查！");
-                continue;
-            }
-            //存项目名称
-            if (r == 0) {
-                projectEntity.setXmmc(row.getCell(0).getStringCellValue());
-                projectEntity = excelDataController.saveproject(projectEntity);
-                continue;
-            } else if (r == 1) {
                 continue;
             }
             //循环Excel的列
             for (c = 0; c < totalCells; c++) {
                 Cell cell = row.getCell(c);
                 if (c == 0) {
-                    try {
-                        double d = cell.getNumericCellValue();
-                    } catch (Exception e) {
-                        sfbz++;
-                        if (sfbz == 1) {
-                            projectEntity.setBz(cell.getStringCellValue());
-                            projectEntity = excelDataController.saveproject(projectEntity);
-                        } else if (sfbz == 2) {
-                            projectEntity.setBjdw(cell.getStringCellValue());
-                            projectEntity = excelDataController.saveproject(projectEntity);
-                        }
-                        break;
-                    }
+                    materialdataEntity.setClmc(cell.getStringCellValue());
                 } else if (c == 1) {
-                    String str = cell.getStringCellValue();
-                    if (str.equals("运输费")) {
-                        projectEntity.setYsf(BigDecimal.valueOf(row.getCell(6).getNumericCellValue()));
-                        projectEntity = excelDataController.saveproject(projectEntity);
-                        break;
-                    } else {
-                        excelDataEntity.setClmc(cell.getStringCellValue());
-                    }
+                    materialdataEntity.setClgg(cell.getStringCellValue());
                 } else if (c == 2) {
-                    excelDataEntity.setClgg(cell.getStringCellValue());
+                    materialdataEntity.setCldw(cell.getStringCellValue());
                 } else if (c == 3) {
-                    // System.out.print("货物单位"+cell.getStringCellValue());
-                    if (cell.getStringCellValue().isEmpty()) {
-                        // System.out.print("1111111");
-                        flag = false;
-                        continue;
-                    }
-                    flag = true;
-                    excelDataEntity.setCldw(cell.getStringCellValue());
+                    materialdataEntity.setJj(BigDecimal.valueOf(cell.getNumericCellValue()));
                 } else if (c == 4) {
-                    excelDataEntity.setClsl((int) cell.getNumericCellValue());
-                } else if (c == 5) {
-                    excelDataEntity.setJj(BigDecimal.valueOf(cell.getNumericCellValue()));
-                } else if (c == 6) {
-                    excelDataEntity.setCbj(BigDecimal.valueOf(cell.getNumericCellValue()));
+                    materialdataEntity.setCbj(BigDecimal.valueOf(cell.getNumericCellValue()));
                 }
             }
-            if (!flag) {
-                //System.out.print("22222222");
-                continue;
-            }
-            excelDataEntity.setXmbh(projectEntity.getId());
+            materialdataEntity.setUid(userEntity.getId());
             ApiResult result = null;
-            result = excelDataController.doSave(excelDataEntity);
+            result = materialDataController.addmate(materialdataEntity);
             if (result.getResCode() == -1) {
-                errorMsg.append(br).append("第").append(r - 2).append("行，").append(result.getResMsg());
+                errorMsg.append(br).append("第").append(r + 1).append("行，").append(result.getResMsg());
             } else if (result.getResCode() == 200) {
-                System.out.print(r + 1 + "\n");
                 sj++;
             }
         }

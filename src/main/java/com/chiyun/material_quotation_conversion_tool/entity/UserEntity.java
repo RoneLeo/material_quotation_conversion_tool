@@ -21,8 +21,6 @@ public class UserEntity {
     private String zh;
     @ApiModelProperty("用户密码")
     private String mm;
-    @ApiModelProperty("用户所属省份id")
-    private Integer sfid;
     @ApiModelProperty("用户角色：0-普通用户，1-管理员")
     private int js;
     @ApiModelProperty("用户登录时限")
@@ -60,15 +58,6 @@ public class UserEntity {
         this.mm = mm;
     }
 
-    @Basic
-    @Column(name = "pid")
-    public Integer getSfid() {
-        return sfid;
-    }
-
-    public void setSfid(Integer sfid) {
-        this.sfid = sfid;
-    }
 
     @Basic
     @Column(name = "role")
@@ -98,13 +87,12 @@ public class UserEntity {
         return js == that.js &&
                 Objects.equals(id, that.id) &&
                 Objects.equals(zh, that.zh) &&
-                Objects.equals(mm, that.mm) &&
-                Objects.equals(sfid, that.sfid);
+                Objects.equals(mm, that.mm);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, zh, mm, sfid, js);
+        return Objects.hash(id, zh, mm, js);
     }
 }

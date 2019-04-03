@@ -144,10 +144,10 @@ public class ExportExcelNew {
                 List<Object> data = new ArrayList<>();        //将前台传来的数据存入到list中
                 Map<String, Object> entity = dataset.get(i);
                 data.add(i + 1);
-                data.add(entity.get("mc"));
-                data.add(entity.get("gg"));
-                data.add(entity.get("dw"));
-                data.add(entity.get("sl"));
+                data.add(entity.get("clmc"));
+                data.add(entity.get("clgg"));
+                data.add(entity.get("cldw"));
+                data.add(entity.get("clsl"));
                 if (lx == 0) {
                     data.add(((BigDecimal) entity.get("jj")).multiply(index).setScale(2, BigDecimal.ROUND_DOWN));
                 } else if (lx == 1) {

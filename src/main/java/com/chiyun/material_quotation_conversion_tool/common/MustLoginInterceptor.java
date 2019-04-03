@@ -28,7 +28,7 @@ public class MustLoginInterceptor extends HandlerInterceptorAdapter {
                 MessageUtils.resultMsg(response, ApiResult.UNKNOWN());
                 return false;
             }
-            if (entity.getDlsx() != null && entity.getDlsx().before(new Date())) {
+            if (entity.getJs() != 1 && entity.getDlsx() != null && entity.getDlsx().before(new Date())) {
                 MessageUtils.resultMsg(response, ApiResult.TimeDown());
                 return false;
             }
