@@ -1,5 +1,8 @@
 package com.chiyun.material_quotation_conversion_tool.entity;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -9,11 +12,16 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "pro_mate_price", schema = "mqct", catalog = "")
+@ApiModel
 @IdClass(ProMatePriceEntityPK.class)
 public class ProMatePriceEntity {
+    @ApiModelProperty("省份id")
     private int sfid;
+    @ApiModelProperty("材料id")
     private int clid;
+    @ApiModelProperty("基价")
     private BigDecimal jj;
+    @ApiModelProperty("成本价")
     private BigDecimal cbj;
 
     @Id

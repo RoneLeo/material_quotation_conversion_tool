@@ -2,6 +2,7 @@ package com.chiyun.material_quotation_conversion_tool.controller;
 
 import com.chiyun.material_quotation_conversion_tool.common.ApiResult;
 import com.chiyun.material_quotation_conversion_tool.entity.ProvinceEntity;
+import com.chiyun.material_quotation_conversion_tool.repository.ProMatePriceRepository;
 import com.chiyun.material_quotation_conversion_tool.repository.ProvinceRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +23,8 @@ import javax.annotation.Resource;
 public class ProvinceController {
     @Resource
     private ProvinceRepository provinceRepository;
+    @Resource
+    private ProMatePriceRepository proMatePriceRepository;
 
     @RequestMapping("/findAll")
     @ApiOperation("获取全部省份信息")
@@ -46,7 +49,8 @@ public class ProvinceController {
     @RequestMapping("/delete")
     @ApiOperation("删除省份信息")
     public ApiResult delete(@RequestParam @ApiParam("省份id") Integer id) {
-
+        if (proMatePriceRepository.existsBySfid(id))
+            return ApiResult.FAILURE("该省份存在价目数据，不能删除");
         if (provinceRepository.existsById(id))
             try {
                 provinceRepository.deleteById(id);

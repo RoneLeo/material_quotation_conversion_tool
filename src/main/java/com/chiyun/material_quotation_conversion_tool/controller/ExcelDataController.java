@@ -81,7 +81,8 @@ public class ExcelDataController {
     @ApiOperation(value = "折算后的总价")
     @RequestMapping("discount")
     @MustLogin(rolerequired = {0})
-    public ApiResult<Object> discount(Integer xmbh, BigDecimal discount) {
+    public ApiResult<Object> discount(@RequestParam @ApiParam("项目id") int xmbh,
+                                      @RequestParam @ApiParam("折算比率") BigDecimal discount) {
         UserEntity userEntity = SessionHelper.getuser();
 //        if (excelDataEntity.isEmpty()) {
 //            return ApiResult.FAILURE("不存在该项目的数据");
@@ -123,9 +124,11 @@ public class ExcelDataController {
     @ApiOperation("导出所选价表")
     @RequestMapping("/getexcelnew")
     @MustLogin(rolerequired = {0})
-    public void getexcelnew(int id, BigDecimal index, @RequestParam @ApiParam("导出类型:0-折算价表，1-基价表，2-成本价表") int lx, HttpServletResponse response) throws IOException {
+    public void getexcelnew(@RequestParam @ApiParam("项目id") int xmbh,
+                            @RequestParam @ApiParam("折算比率") BigDecimal discount,
+                            @RequestParam @ApiParam("导出类型:0-折算价表，1-基价表，2-成本价表") int lx, HttpServletResponse response) throws IOException {
         UserEntity userEntity = SessionHelper.getuser();
-        ProjectEntity projectEntity = projectRepository.findById(id);
+        ProjectEntity projectEntity = projectRepository.findById(xmbh);
         if (projectEntity == null) {
             MessageUtils.resultMsg(response, ApiResult.FAILURE("没有该项目信息"));
             return;
@@ -136,7 +139,7 @@ public class ExcelDataController {
             return;
         }
         String title = projectEntity.getXmmc();
-        ExportExcelNew.exportEXL(projectEntity, title, list, response, index, lx);
+        ExportExcelNew.exportEXL(projectEntity, title, list, response, discount, lx);
     }
 
 
