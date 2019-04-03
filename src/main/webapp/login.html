@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=11"/>
+    <title id="headTitle">防护/防化/通风设备厂商报价工具软件</title>
+    <meta name="keywords" id="headKeywords" content="">
+    <meta name="description" id="headDescription" content="">
+    <link rel="icon" type="image/x-icon" href="img/logo.png"/>
+
+    <link rel="stylesheet" href="css/amazeui.min.css">
+    <link rel="stylesheet" href="css/iconfont/iconfont.css">
+    <!--<link rel="stylesheet" href="css/index.css">-->
+    <style>
+        body {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image:url('./img/login.jpg');
+            background-size:cover;
+        }
+        .main-wrapper {
+            position: relative;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: -30px;
+        }
+        .header {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-width: 620px;
+        }
+        .title {
+            font-size: 34px;
+            color: #f1f1f1;
+            font-weight: 600;
+            line-height: 70px;
+            border-bottom: 1px solid #f1f1f1;
+            letter-spacing: 2px;
+        }
+        .subtitle {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #c1c1c1;
+        }
+        .login-form {
+            margin-top: 20px;
+            background-color: RGBA(6, 42, 122, .4);
+            padding: 30px;
+            /*width: 500px;*/
+            border: 1px solid RGBA(6, 42, 122, .4);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .am-form-group {
+            margin-bottom: 10px;
+        }
+        .am-form-label {
+            color: #f1f1f1;
+        }
+        .am-form-input {
+            display: inline-block;
+            width: auto;
+        }
+        .am-form-input input {
+            outline: none;
+            border: 0;
+        }
+        .am-btn {
+            padding: 5px 20px;
+        }
+    </style>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/amazeui.min.js"></script>
+</head>
+<body >
+    <div class="main-wrapper">
+        <div class="header">
+            <div class="title">防护/防化/通风设备厂商报价工具软件</div>
+            <div class="subtitle">Protection/Chemical/Ventilation Equipment Manufacturer Quotation Tool Software.</div>
+        </div>
+        <form class="am-form am-form-horizontal login-form" role="form">
+            <div class="am-form-group">
+                <label for="acount" class="am-form-label">账号：</label>
+                <div class="am-form-input">
+                    <input type="text" class="form-control" id="acount" placeholder="用户账号">
+                </div>
+            </div>
+            <div class="am-form-group">
+                <label for="password" class="am-form-label">密码：</label>
+                <div class="am-form-input">
+                    <input type="text" class="form-control" id="password" placeholder="用户密码">
+                </div>
+            </div>
+            <div class="am-form-group" style="text-align: center">
+                <button id="login-btn" type="button" class="am-btn am-btn-default">登录</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        var ServerUrl = 'http://192.168.0.165:9007'
+        $(function () {
+            $('#login-btn').click(function () {
+                let acount = $('#acount').val();
+                let password = $('#password').val();
+                console.log(acount, password)
+                $.get(ServerUrl + '/user/login?zh=' + acount + '&mm=' + password, function (res) {
+                    if(res.resCode == 200) {
+                        localStorage.setItem("user", JSON.stringify(res.data));
+                        let user = JSON.parse(localStorage.getItem("user"));
+                        console.log(user)
+                        if(user) {
+                            window.location.href='index.html';
+                        }
+                    }else {
+                        alert(res.data.resMsg)
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+</html>
