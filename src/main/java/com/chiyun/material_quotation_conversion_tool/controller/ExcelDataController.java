@@ -154,6 +154,8 @@ public class ExcelDataController {
 
 
     public ProjectEntity saveproject(ProjectEntity projectEntity) {
+        projectEntity.setYsf(projectEntity.getYsf() == null ? new BigDecimal(0) : projectEntity.getYsf());
+        projectEntity.setJcf(projectEntity.getJcf() == null ? new BigDecimal(0) : projectEntity.getJcf());
         return projectRepository.save(projectEntity);
     }
 }
