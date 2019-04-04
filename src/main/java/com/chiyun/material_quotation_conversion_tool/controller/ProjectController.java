@@ -7,14 +7,18 @@ import com.chiyun.material_quotation_conversion_tool.entity.ProjectEntity;
 import com.chiyun.material_quotation_conversion_tool.entity.UserEntity;
 import com.chiyun.material_quotation_conversion_tool.repository.ExcelDataRepository;
 import com.chiyun.material_quotation_conversion_tool.repository.ProjectRepository;
+import com.chiyun.material_quotation_conversion_tool.utils.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.catalina.User;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Api(description = "项目管理")
@@ -30,9 +34,17 @@ public class ProjectController {
     @ApiOperation(value = "添加项目")
     @RequestMapping("add")
     @MustLogin(rolerequired = {0})
-    public ApiResult<Object> add(ProjectEntity projectEntity) {
+    @Deprecated
+    public ApiResult<Object> add(@RequestParam(required = false) @ApiParam("外在项目名称") String wzxmmc,
+                                 @RequestParam(required = false) @ApiParam("项目名称") String xmmc,
+                                 @RequestParam(required = false) @ApiParam("备注") String bz,
+                                 @RequestParam(required = false) @ApiParam("报价单位") String bjdw,
+                                 @RequestParam(required = false) @ApiParam("运输费") BigDecimal ysf,
+                                 @RequestParam(required = false) @ApiParam("第三方检测费") BigDecimal jcf) {
         UserEntity userEntity = SessionHelper.getuser();
+        ProjectEntity projectEntity = new ProjectEntity();
         projectEntity.setUid(userEntity.getId());
+        projectEntity.setYsf(projectEntity.getYsf() == null ? new BigDecimal(0) : projectEntity.getYsf());
         try {
             projectRepository.save(projectEntity);
             return ApiResult.SUCCESS(projectEntity);
@@ -43,7 +55,7 @@ public class ProjectController {
     }
 
     @ApiOperation(value = "删除项目")
-    @RequestMapping("del")
+    @RequestMapping("/del")
     @MustLogin(rolerequired = {0})
     public ApiResult<Object> del(Integer id) {
         ProjectEntity projectEntity = projectRepository.findById(id);
@@ -70,11 +82,24 @@ public class ProjectController {
         if (isExist == null) {
             return ApiResult.FAILURE("该项目不存在");
         }
-        ProjectEntity result = projectRepository.save(projectEntity);
-        if (result == null) {
+        if (StringUtils.isNotEmpty(projectEntity.getXmmc()))
+            isExist.setXmmc(projectEntity.getXmmc());
+        if (StringUtils.isNotEmpty(projectEntity.getWzxmmc()))
+            isExist.setWzxmmc(projectEntity.getWzxmmc());
+        if (StringUtils.isNotEmpty(projectEntity.getBjdw()))
+            isExist.setBjdw(projectEntity.getBjdw());
+        if (StringUtils.isNotEmpty(projectEntity.getBz()))
+            isExist.setBz(projectEntity.getBz());
+        if (projectEntity.getYsf() != null)
+            isExist.setYsf(projectEntity.getYsf());
+        if (projectEntity.getJcf() != null)
+            isExist.setJcf(projectEntity.getJcf());
+        try {
+            projectRepository.save(isExist);
+            return ApiResult.SUCCESS("修改成功");
+        } catch (Exception e) {
             return ApiResult.FAILURE("修改失败");
         }
-        return ApiResult.SUCCESS("修改成功");
     }
 
     @ApiOperation(value = "查詢项目")

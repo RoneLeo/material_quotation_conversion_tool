@@ -13,12 +13,16 @@ import java.util.Map;
 public interface ExcelDataRepository extends CrudRepository<ExcelDataEntity, String> {
     List<ExcelDataEntity> findByXmbh(Integer xmbh);
 
+    boolean existsAllByXmbh(Integer xmbh);
+
+    boolean existsByXmbhAndClgg(Integer xmbh, String clgg);
+
     // 通过id删除
     @Query(value = "delete from excel_data where project_id = ?1", nativeQuery = true)
     @Modifying
     @Transactional
     int deleteByXmbh(Integer xmbh);
 
-    @Query(value = "SELECT excel_data.id,project_id pid,goods_name mc,goods_model gg,number sl,goods_unit dw,CASE WHEN baseprice IS NULL THEN 0 ELSE baseprice END jj,CASE WHEN costprice IS NULL THEN 0 ELSE costprice END cbj FROM excel_data LEFT JOIN (SELECT id, typesize,unit,baseprice,costprice FROM pro_mate_price,materialdata WHERE id = pro_mate_price.mid AND pid =?2)b ON project_id = ?1 AND goods_model = b.typesize", nativeQuery = true)
-    List<Map<String, Object>> findAllByXmbhAndSfid(Integer xmbh, Integer sfid);
+    @Query(value = "SELECT a.id,project_id xmbh,goods_name clmc,goods_model clgg,number clsl,goods_unit cldw,CASE WHEN baseprice IS NULL THEN 0 ELSE baseprice END jj,CASE WHEN costprice IS NULL THEN 0 ELSE costprice END cbj FROM (SELECT * from excel_data WHERE project_id = ?1 ) a LEFT JOIN (SELECT project.id, typesize,unit,baseprice,costprice FROM materialdata,project WHERE project.id = ?1 AND  materialdata.uid =project.uid)b ON  goods_model = b.typesize", nativeQuery = true)
+    List<Map<String, Object>> findAllByXmbhAndSfid(Integer xmbh);
 }

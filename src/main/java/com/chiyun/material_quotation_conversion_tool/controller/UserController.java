@@ -55,7 +55,6 @@ public class UserController {
     @RequestMapping("/add")
     public ApiResult add(@RequestParam @ApiParam("用户账号") String zh,
                          @RequestParam(defaultValue = "666666") @ApiParam("用户密码") String mm,
-                         @RequestParam @ApiParam("用户所属省份id") Integer sfid,
                          @RequestParam(required = false) @ApiParam("用户角色") Integer js) {
 
         if (StringUtils.isNotEmpty(zh)) {
@@ -71,7 +70,6 @@ public class UserController {
                 e.printStackTrace();
                 return ApiResult.FAILURE("密码加密失败");
             }
-            userEntity.setSfid(sfid == null ? 0 : sfid);
             userEntity.setJs(js == null ? 0 : js);
             try {
                 userRepository.save(userEntity);
