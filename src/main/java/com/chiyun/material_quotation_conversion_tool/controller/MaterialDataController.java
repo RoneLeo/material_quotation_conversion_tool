@@ -1,5 +1,6 @@
 package com.chiyun.material_quotation_conversion_tool.controller;
 
+import com.chiyun.material_quotation_conversion_tool.common.ApiPageResult;
 import com.chiyun.material_quotation_conversion_tool.common.ApiResult;
 import com.chiyun.material_quotation_conversion_tool.common.MustLogin;
 import com.chiyun.material_quotation_conversion_tool.common.SessionHelper;
@@ -11,6 +12,9 @@ import com.chiyun.material_quotation_conversion_tool.utils.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,6 +47,23 @@ public class MaterialDataController {
             list = materialDataRepository.findAllByUid(uid);
         }
         return ApiResult.SUCCESS(list);
+    }
+
+    @ApiOperation("获取所有材料价目")
+    @RequestMapping("/findAllByPage")
+    @MustLogin(rolerequired = {0})
+    public ApiResult findAllByPage(@RequestParam(required = false) @ApiParam("用户id，仅对管理员有效") String uid,
+                                   @RequestParam @ApiParam("页码") int page,
+                                   @RequestParam @ApiParam("分页大小") int pagesize) {
+        UserEntity userEntity = SessionHelper.getuser();
+        Pageable pageable = PageRequest.of(page - 1, pagesize);
+        Page<MaterialdataEntity> list;
+        if (userEntity.getJs() != 1) {
+            list = materialDataRepository.findAllByUid(userEntity.getId(), pageable);
+        } else {
+            list = materialDataRepository.findAllByUid(uid, pageable);
+        }
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
     @ApiOperation("修改一个材料价目")

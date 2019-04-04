@@ -1,5 +1,6 @@
 package com.chiyun.material_quotation_conversion_tool.controller;
 
+import com.chiyun.material_quotation_conversion_tool.common.ApiPageResult;
 import com.chiyun.material_quotation_conversion_tool.common.ApiResult;
 import com.chiyun.material_quotation_conversion_tool.common.MustLogin;
 import com.chiyun.material_quotation_conversion_tool.common.SessionHelper;
@@ -12,6 +13,9 @@ import com.chiyun.material_quotation_conversion_tool.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,11 +68,22 @@ public class ExcelDataController {
     }
 
     @ApiOperation(value = "查询项目已有材料")
-    @RequestMapping("findAllByXmbh")
+    @RequestMapping("/findAllByXmbh")
     @MustLogin(rolerequired = {0})
     public ApiResult<Object> findAllByXmbh(@RequestParam @ApiParam("项目id") int xmbh) {
         List<Map<String, Object>> list = excelDataRepository.findAllByXmbhAndSfid(xmbh);
         return ApiResult.SUCCESS(list);
+    }
+
+    @ApiOperation(value = "分页查询项目已有材料")
+    @RequestMapping("/findAllByXmbhAndPage")
+    @MustLogin(rolerequired = {0})
+    public ApiResult<Object> findAllByXmbh(@RequestParam @ApiParam("项目id") int xmbh,
+                                           @RequestParam @ApiParam("页码") int page,
+                                           @RequestParam @ApiParam("分页大小") int pagesize) {
+        Pageable pageable = PageRequest.of(page - 1, pagesize);
+        Page<Map<String, Object>> list = excelDataRepository.findAllByXmbhAndSfid(xmbh, pageable);
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
     @ApiOperation(value = "项目基价、成本价、折算价")
@@ -96,13 +111,13 @@ public class ExcelDataController {
     }
 
     @ApiOperation(value = "给项目添加一个材料")
-    @RequestMapping("addMaterial")
+    @RequestMapping("/addMaterial")
     @MustLogin(rolerequired = {0})
-    public ApiResult<Object> addMaterial(@RequestParam(required = false) @ApiParam("项目id") Integer xmbh,
+    public ApiResult<Object> addMaterial(@RequestParam @ApiParam("项目id") Integer xmbh,
                                          @RequestParam(required = false) @ApiParam("材料名称") String clmc,
                                          @RequestParam(required = false) @ApiParam("材料规格") String clgg,
                                          @RequestParam(required = false) @ApiParam("材料单位") String cldw,
-                                         @RequestParam(required = false) @ApiParam("材料数量") Integer clsl) {
+                                         @RequestParam @ApiParam("材料数量,大于0") Integer clsl) {
         UserEntity userEntity = SessionHelper.getuser();
         if (userEntity.getJs() == 1)
             return ApiResult.FAILURE("管理员无需添加项目材料");
@@ -119,6 +134,39 @@ public class ExcelDataController {
         excelDataEntity.setCldw(StringUtils.isEmpty(cldw) ? "" : cldw);
         excelDataEntity.setClsl(clsl);
         return doSave(excelDataEntity);
+    }
+
+    @ApiOperation(value = "修改一个材料")
+    @RequestMapping("/updateOne")
+    @MustLogin(rolerequired = {0})
+    public ApiResult<Object> updateOne(@RequestParam @ApiParam("材料id") Integer id,
+                                       @RequestParam(required = false) @ApiParam("材料数量") Integer clsl) {
+        UserEntity userEntity = SessionHelper.getuser();
+        if (userEntity.getJs() == 1)
+            return ApiResult.FAILURE("管理员无需修改项目材料");
+        if (clsl == null || clsl == 0)
+            return ApiResult.FAILURE("材料数量不能为0");
+        Optional<ExcelDataEntity> optional = excelDataRepository.findById(id);
+        if (!optional.isPresent())
+            return ApiResult.FAILURE("不存在该材料");
+        ExcelDataEntity excelDataEntity = optional.get();
+        excelDataEntity.setClsl(clsl);
+        return doSave(excelDataEntity);
+    }
+
+    @ApiOperation(value = "删除一个材料")
+    @RequestMapping("/deleteOne")
+    @MustLogin(rolerequired = {0})
+    public ApiResult<Object> deleteOne(@RequestParam @ApiParam("材料id") Integer id) {
+        if (!excelDataRepository.existsById(id)) {
+            return ApiResult.FAILURE("不存在该材料");
+        }
+        try {
+            excelDataRepository.deleteById(id);
+            return ApiResult.SUCCESS();
+        } catch (Exception we) {
+            return ApiResult.FAILURE("删除失败");
+        }
     }
 
     public ApiResult<Object> doSave(ExcelDataEntity excelDataEntity) {
