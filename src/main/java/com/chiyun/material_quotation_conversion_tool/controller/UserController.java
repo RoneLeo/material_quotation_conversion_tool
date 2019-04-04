@@ -113,4 +113,44 @@ public class UserController {
     public ApiResult findAll() {
         return ApiResult.SUCCESS(userRepository.findAll());
     }
+
+    @RequestMapping("/changePassword")
+    @ApiOperation("用户修改密码")
+    @MustLogin(rolerequired = {0})
+    public ApiResult changePassword(@RequestParam() @ApiParam("原密码") String ymm,
+                                    @RequestParam() @ApiParam("新密码") String xmm) throws Exception {
+        UserEntity userEntity = SessionHelper.getuser();
+        String oldpass = MD5Util.MD5(ymm);
+        if (!userEntity.getMm().equals(oldpass))
+            return ApiResult.FAILURE("原始密码输入错误");
+        String newpass = MD5Util.MD5(xmm);
+        userEntity.setMm(newpass);
+        try {
+            userRepository.save(userEntity);
+            SessionHelper.getSession().removeAttribute("user");
+            return ApiResult.SUCCESS();
+        } catch (Exception e) {
+            return ApiResult.FAILURE("修改密码失败");
+        }
+    }
+
+    @RequestMapping("/resetPassword")
+    @ApiOperation("重置用户密码")
+    @MustLogin(rolerequired = {1})
+    public ApiResult resetPassword(@RequestParam() @ApiParam("用户id") String id) throws Exception {
+        UserEntity userEntity;
+        Optional<UserEntity> optionalUserEntity = userRepository.findById(id);
+        if (!optionalUserEntity.isPresent()) {
+            return ApiResult.FAILURE("不存在的用户");
+        }
+        userEntity = optionalUserEntity.get();
+        userEntity.setMm(MD5Util.MD5("666666"));
+        try {
+            userRepository.save(userEntity);
+            return ApiResult.SUCCESS();
+        } catch (Exception e) {
+            return ApiResult.FAILURE("重置失败");
+        }
+
+    }
 }
