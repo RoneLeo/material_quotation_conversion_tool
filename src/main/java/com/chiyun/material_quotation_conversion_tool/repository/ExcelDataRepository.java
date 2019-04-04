@@ -15,6 +15,8 @@ public interface ExcelDataRepository extends CrudRepository<ExcelDataEntity, Str
 
     boolean existsAllByXmbh(Integer xmbh);
 
+    boolean existsByXmbhAndClgg(Integer xmbh, String clgg);
+
     // 通过id删除
     @Query(value = "delete from excel_data where project_id = ?1", nativeQuery = true)
     @Modifying

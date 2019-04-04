@@ -35,8 +35,8 @@ public class ExcelDataController {
     private ProjectRepository projectRepository;
 
 
-    @ApiOperation(value = "导入excel数据")
-    @RequestMapping("importExcel")
+    @ApiOperation(value = "通过Excel导入项目材料数据")
+    @RequestMapping("/importExcel")
     @MustLogin(rolerequired = {0})
     public ApiResult<Object> importExcel(String xmmc, @RequestParam(value = "file") MultipartFile file) {
         UserEntity userEntity = SessionHelper.getuser();
@@ -71,8 +71,8 @@ public class ExcelDataController {
         return ApiResult.SUCCESS(list);
     }
 
-    @ApiOperation(value = "折算后的总价")
-    @RequestMapping("discount")
+    @ApiOperation(value = "项目基价、成本价、折算价")
+    @RequestMapping("/discount")
     @MustLogin(rolerequired = {0})
     public ApiResult<Object> discount(@RequestParam @ApiParam("项目id") int xmbh,
                                       @RequestParam @ApiParam("折算比率") BigDecimal discount) {
@@ -95,9 +95,29 @@ public class ExcelDataController {
         return ApiResult.SUCCESS(map);
     }
 
-    @ApiOperation(value = "给项目添加材料")
+    @ApiOperation(value = "给项目添加一个材料")
     @RequestMapping("addMaterial")
-    public ApiResult<Object> addMaterial(ExcelDataEntity excelDataEntity) {
+    @MustLogin(rolerequired = {0})
+    public ApiResult<Object> addMaterial(@RequestParam(required = false) @ApiParam("项目id") Integer xmbh,
+                                         @RequestParam(required = false) @ApiParam("材料名称") String clmc,
+                                         @RequestParam(required = false) @ApiParam("材料规格") String clgg,
+                                         @RequestParam(required = false) @ApiParam("材料单位") String cldw,
+                                         @RequestParam(required = false) @ApiParam("材料数量") Integer clsl) {
+        UserEntity userEntity = SessionHelper.getuser();
+        if (userEntity.getJs() == 1)
+            return ApiResult.FAILURE("管理员无需添加项目材料");
+        ProjectEntity projectEntity = projectRepository.findById(xmbh);
+        if (projectEntity == null) {
+            return ApiResult.FAILURE("没有该项目信息");
+        }
+        if (excelDataRepository.existsByXmbhAndClgg(projectEntity.getId(), StringUtils.isEmpty(clgg) ? "" : clgg))
+            return ApiResult.FAILURE("该项目已存在该规格型号的材料");
+        ExcelDataEntity excelDataEntity = new ExcelDataEntity();
+        excelDataEntity.setXmbh(projectEntity.getId());
+        excelDataEntity.setClgg(StringUtils.isEmpty(clgg) ? "" : clgg);
+        excelDataEntity.setClmc(StringUtils.isEmpty(clmc) ? "" : clmc);
+        excelDataEntity.setCldw(StringUtils.isEmpty(cldw) ? "" : cldw);
+        excelDataEntity.setClsl(clsl);
         return doSave(excelDataEntity);
     }
 

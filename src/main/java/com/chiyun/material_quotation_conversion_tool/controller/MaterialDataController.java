@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -30,7 +31,7 @@ public class MaterialDataController {
     @Resource
     private MaterialDataRepository materialDataRepository;
 
-    @ApiOperation("获取所有材料")
+    @ApiOperation("获取所有材料价目")
     @RequestMapping("/findAll")
     @MustLogin(rolerequired = {0})
     public ApiResult findAll(@RequestParam(required = false) @ApiParam("用户id，仅对管理员有效") String uid) {
@@ -44,7 +45,56 @@ public class MaterialDataController {
         return ApiResult.SUCCESS(list);
     }
 
-    @ApiOperation("用户导入可用材料清单")
+    @ApiOperation("修改一个材料价目")
+    @RequestMapping("/updateOne")
+    @MustLogin(rolerequired = {0})
+    public ApiResult updateOne(@RequestParam @ApiParam("材料id") Integer clid,
+                               @RequestParam(required = false) @ApiParam("基价") BigDecimal jj,
+                               @RequestParam(required = false) @ApiParam("成本价") BigDecimal cbj) {
+        Optional<MaterialdataEntity> optional = materialDataRepository.findById(clid);
+        if (!optional.isPresent())
+            return ApiResult.FAILURE("不存在该材料价目");
+        MaterialdataEntity entity = optional.get();
+        entity.setJj(jj == null ? new BigDecimal(0) : jj);
+        entity.setCbj(cbj == null ? new BigDecimal(0) : cbj);
+        try {
+            materialDataRepository.save(entity);
+            return ApiResult.SUCCESS(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResult.FAILURE("修改材料价目失败");
+        }
+    }
+
+    @ApiOperation("添加一个材料价目")
+    @RequestMapping("/addOne")
+    @MustLogin(rolerequired = {0})
+    public ApiResult addOne(@RequestParam(required = false) @ApiParam("材料名称") String clmc,
+                            @RequestParam(required = false) @ApiParam("材料规格") String clgg,
+                            @RequestParam(required = false) @ApiParam("材料单位") String cldw,
+                            @RequestParam(required = false) @ApiParam("基价") BigDecimal jj,
+                            @RequestParam(required = false) @ApiParam("成本价") BigDecimal cbj) {
+        UserEntity userEntity = SessionHelper.getuser();
+        if (materialDataRepository.existsByUidAndClgg(userEntity.getId(), clgg)) {
+            return ApiResult.FAILURE("已存在该规格材料价目");
+        }
+        MaterialdataEntity entity = new MaterialdataEntity();
+        entity.setClmc(StringUtils.isEmpty(clmc) ? "" : clmc);
+        entity.setClgg(StringUtils.isEmpty(clgg) ? "" : clgg);
+        entity.setCldw(StringUtils.isEmpty(cldw) ? "" : cldw);
+        entity.setJj(jj == null ? new BigDecimal(0) : jj);
+        entity.setCbj(cbj == null ? new BigDecimal(0) : cbj);
+        entity.setUid(userEntity.getId());
+        try {
+            materialDataRepository.save(entity);
+            return ApiResult.SUCCESS(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResult.FAILURE("添加材料价目失败");
+        }
+    }
+
+    @ApiOperation("用户导入可用材料价目")
     @RequestMapping("/fileImport")
     @MustLogin(rolerequired = {0})
     public ApiResult fileImport(@RequestParam @ApiParam("数据文件") MultipartFile file) {
@@ -72,7 +122,7 @@ public class MaterialDataController {
         return ApiResult.SUCCESS(message);
     }
 
-    @ApiOperation("删除所选材料清单")
+    @ApiOperation("删除所选材料价目")
     @RequestMapping("/deleteOneById")
     @MustLogin(rolerequired = {0})
     public ApiResult deleteOneById(@RequestParam() @ApiParam("材料id") int clid) {
@@ -83,7 +133,7 @@ public class MaterialDataController {
         return ApiResult.FAILURE("删除失败");
     }
 
-    @ApiOperation("删除用户导入材料清单")
+    @ApiOperation("删除选中用户所有材料价目")
     @RequestMapping("/deleteAllByUid")
     @MustLogin(rolerequired = {0})
     public ApiResult deleteAllByUid(@RequestParam(required = false) @ApiParam("用户id，仅对管理员用户有效") String uid) {

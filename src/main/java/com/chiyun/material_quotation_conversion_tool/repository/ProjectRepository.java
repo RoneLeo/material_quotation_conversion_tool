@@ -15,6 +15,8 @@ public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
     @Transactional
     int deleteById(Integer id);
 
+    boolean existsById(Integer xmbh);
+
     // 通过id查询
     ProjectEntity findById(Integer id);
 

@@ -22,4 +22,6 @@ public interface MaterialDataRepository extends JpaRepository<MaterialdataEntity
     @Transactional
     @Modifying
     int deleteByUidAndClid(String uid, int clid);
+
+    boolean existsByUidAndClgg(String uid, String clgg);
 }

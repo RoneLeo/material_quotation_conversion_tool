@@ -156,8 +156,7 @@ public class MaterialImportUtils {
                 }
             }
             materialdataEntity.setUid(userEntity.getId());
-            ApiResult result = null;
-            result = materialDataController.addmate(materialdataEntity);
+            ApiResult result = materialDataController.addmate(materialdataEntity);
             if (result.getResCode() == -1) {
                 errorMsg.append(br).append("第").append(r + 1).append("行，").append(result.getResMsg());
             } else if (result.getResCode() == 200) {
