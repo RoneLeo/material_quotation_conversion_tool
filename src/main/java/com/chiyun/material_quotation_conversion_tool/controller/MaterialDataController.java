@@ -5,8 +5,10 @@ import com.chiyun.material_quotation_conversion_tool.common.ApiResult;
 import com.chiyun.material_quotation_conversion_tool.common.MustLogin;
 import com.chiyun.material_quotation_conversion_tool.common.SessionHelper;
 import com.chiyun.material_quotation_conversion_tool.entity.MaterialdataEntity;
+import com.chiyun.material_quotation_conversion_tool.entity.ProjectEntity;
 import com.chiyun.material_quotation_conversion_tool.entity.UserEntity;
 import com.chiyun.material_quotation_conversion_tool.repository.MaterialDataRepository;
+import com.chiyun.material_quotation_conversion_tool.repository.ProjectRepository;
 import com.chiyun.material_quotation_conversion_tool.utils.MaterialImportUtils;
 import com.chiyun.material_quotation_conversion_tool.utils.StringUtils;
 import io.swagger.annotations.Api;
@@ -34,6 +36,8 @@ import java.util.*;
 public class MaterialDataController {
     @Resource
     private MaterialDataRepository materialDataRepository;
+    @Resource
+    private ProjectRepository projectRepository;
 
     @ApiOperation("获取所有材料价目")
     @RequestMapping("/findAll")
@@ -64,6 +68,48 @@ public class MaterialDataController {
             list = materialDataRepository.findAllByUid(uid, pageable);
         }
         return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
+
+    @ApiOperation("查询匹配材料价目")
+    @RequestMapping("/searchAllByPage")
+    @MustLogin(rolerequired = {0})
+    public ApiResult searchAllByPage(@RequestParam(required = false) @ApiParam("用户id，仅对管理员有效") String uid,
+                                     @RequestParam(required = false) @ApiParam("材料规格") String clgg,
+                                     @RequestParam(required = false) @ApiParam("材料名称") String clmc,
+                                     @RequestParam @ApiParam("页码") int page,
+                                     @RequestParam @ApiParam("分页大小") int pagesize) {
+        clgg = StringUtils.getnamelike(clgg);
+        clmc = StringUtils.getnamelike(clmc);
+        UserEntity userEntity = SessionHelper.getuser();
+        Pageable pageable = PageRequest.of(page - 1, pagesize);
+        Page<MaterialdataEntity> list;
+        if (userEntity.getJs() != 1) {
+            list = materialDataRepository.findAllByUidAndClggLikeAndClmcLike(userEntity.getId(), clgg, clmc, pageable);
+        } else {
+            list = materialDataRepository.findAllByUidAndClggLikeAndClmcLike(uid, clgg, clmc, pageable);
+        }
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
+    }
+
+    @ApiOperation("根据项目编号查询")
+    @RequestMapping("/searchByXmbh")
+    @MustLogin(rolerequired = {0})
+    public ApiResult searchByXmbh(@RequestParam @ApiParam("项目编号") Integer xmbh,
+                                  @RequestParam(required = false) @ApiParam("材料规格") String clgg,
+                                  @RequestParam(required = false) @ApiParam("材料名称") String clmc) {
+        UserEntity userEntity = SessionHelper.getuser();
+        if (userEntity.getJs() == 1)
+            return ApiResult.FAILURE("管理员无需查询");
+        ProjectEntity projectEntity = projectRepository.findById(xmbh);
+        if (projectEntity == null) {
+            return ApiResult.FAILURE("不存在的项目");
+        }
+        if (!projectEntity.getUid().equals(userEntity.getId()))
+            return ApiResult.FAILURE("这不是你的项目");
+        clgg = StringUtils.getnamelike(clgg);
+        clmc = StringUtils.getnamelike(clmc);
+        List<MaterialdataEntity> list = materialDataRepository.findAllByXmbhAndClggLikeAndClmcLike(xmbh, userEntity.getId(), clgg, clmc);
+        return ApiResult.SUCCESS(list);
     }
 
     @ApiOperation("修改一个材料价目")

@@ -109,8 +109,6 @@ public class StringUtils {
     }
 
 
-
-
     public static String getstationdata(String data) {
         Integer sss;
         try {
@@ -172,8 +170,15 @@ public class StringUtils {
         }
         return true;
     }
+
     public static double getdouble(double d, int scal) {
         return new BigDecimal(d).setScale(scal, BigDecimal.ROUND_HALF_UP).doubleValue();
 
+    }
+
+    public static String getnamelike(String str) {
+        if (isEmpty(str))
+            return "%%";
+        return "%" + str + "%";
     }
 }
