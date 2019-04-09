@@ -66,12 +66,36 @@
     <div id="result" class="result">
         <span class="title">结果框</span>
         <div class="am-g">
-            <span class="result-num">
-                ￥<span id="price">0</span>
-                <a id="discount-href">导出折算表</a>
-                <a id="baseprice-href">导出基价表</a>
-                <a id="cost-href">导出成本表</a>
-            </span>
+            <table class="price-table">
+                <tr>
+                    <td>折算价</td>
+                    <td>基价</td>
+                    <td>成本价</td>
+                </tr>
+                <tr style="font-size: 34px;color: #890098;">
+                    <td>￥<span id="price">0</span></td>
+                    <td>￥<span id="base-price">0</span></td>
+                    <td>￥<span id="cost-price">0</span></td>
+                </tr>
+                <tr>
+                    <td><a id="discount-href">导出折算表</a></td>
+                    <td><a id="baseprice-href">导出基价表</a></td>
+                    <td><a id="cost-href">导出成本表</a></td>
+                </tr>
+            </table>
+
+            <!--<div class="result-num">-->
+                <!--<span style="color: #666;font-size: 20px;">折算价： </span>￥<span id="price1">0</span>-->
+                <!--<a id="discount-href">导出折算表</a>-->
+            <!--</div>-->
+            <!--<div class="result-num">-->
+                <!--<span style="color: #666">基价： </span>￥<span id="base-price">0</span>-->
+                <!--<a id="baseprice-href">导出基价表</a>-->
+            <!--</div>-->
+            <!--<div class="result-num">-->
+                <!--<span style="color: #666">成本价： </span>￥<span id="cost-price">0</span>-->
+                <!--<a id="cost-href">导出成本表</a>-->
+            <!--</div>-->
         </div>
     </div>
 </div>

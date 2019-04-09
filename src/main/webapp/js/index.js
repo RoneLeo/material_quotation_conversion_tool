@@ -13,7 +13,6 @@ $(function () {
         window.location.href = 'login.html';
     } else {
         getAllProject();
-        getAllProvince();
         $('#countBtn').click(function () {
             let value = $('#rate').val();
             if (value == '') {
@@ -50,10 +49,27 @@ $(function () {
 
 
 function getTotalNum() {
-    $.get(ServerUrl + '/conbersiontool/discount?xmbh=' + selectedId + '&discount=' + discountNum, function (data) {
-        let price = data.data;
-        $('#price').text(price);
-    })
+    $.ajax({
+        type: "GET",
+        url: ServerUrl + '/conbersiontool/discount?xmbh=' + selectedId + '&discount=' + discountNum,
+        contentType: "application/json; charset=utf-8",
+        dataType: 'json',
+        xhrFields: {
+            withCredentials: true
+        },
+        crossDomain: true,
+        success: function (res) {
+            if (res.resCode == 200) {
+                let priceobj = res.data;
+                $('#price').text(priceobj.zsj);
+                $('#base-price').text(priceobj.jj);
+                $('#cost-price').text(priceobj.cbj);
+            } else {
+                alert(res.resMsg)
+            }
+        }
+    });
+
 }
 
 function importProject() {
@@ -96,33 +112,8 @@ function projectChange() {
     }
 }
 
-function provinceChange() {
-    // var objS = document.getElementById("selectGroup");
-    // var projectId = objS.options[objS.selectedIndex].value;
-    // selectedId = projectId;
-    // if (discountNum && selectedId) {
-    //     getTotalNum();
-    //     getExportFile();
-    // }
-}
-
-function getAllProvince() {
 
 
-    $.get(ServerUrl + '/province/findAll', function (data) {
-        var provinces = data.data;
-        var selectProvinceHtml = '';
-        // var projectTableHtml = '';
-        if (provinces && provinces.length) {
-            provinces.forEach(function (item) {
-                selectProvinceHtml += '<option value="' + item.id + '">' + item.mc + '</option>';
-                // projectTableHtml += '<tr> <td>' + item.mc + '</td><td><input type="button" value="删除" class="del-btn" data-index="' + item.id + '"></input></td></tr>';
-            })
-        }
-        $('#selectProvince').html(selectProvinceHtml);
-        // $('#project-table tbody').html(projectTableHtml);
-    })
-}
 
 function getAllProject() {
     $.ajax({
@@ -148,17 +139,4 @@ function getAllProject() {
             $('#project-table tbody').html(projectTableHtml);
         }
     });
-    // $.get(ServerUrl + '/project/findAll', function (data) {
-    //     var projects = data.data;
-    //     var selectGroupHtml = '';
-    //     var projectTableHtml = '';
-    //     if (projects && projects.length) {
-    //         projects.forEach(function (item) {
-    //             selectGroupHtml += '<option value="' + item.id + '">' + item.wzxmmc + '</option>';
-    //             projectTableHtml += '<tr> <td>' + item.wzxmmc + '</td><td><input type="button" value="删除" class="del-btn" data-index="' + item.id + '"></input></td></tr>';
-    //         })
-    //     }
-    //     $('#selectGroup').html(selectGroupHtml);
-    //     $('#project-table tbody').html(projectTableHtml);
-    // })
 }

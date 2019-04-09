@@ -123,7 +123,6 @@
         $('#login-btn').click(function () {
             let acount = $('#acount').val();
             let password = $('#password').val();
-            console.log(acount, password)
             $.ajax({
                 type: "GET",
                 url: ServerUrl + '/user/login?zh=' + acount + '&mm=' + password,
@@ -146,18 +145,6 @@
                     }
                 }
             });
-            // $.get(ServerUrl + '/user/login?zh=' + acount + '&mm=' + password, function (res) {
-            //     if(res.resCode == 200) {
-            //         localStorage.setItem("user", JSON.stringify(res.data));
-            //         let user = JSON.parse(localStorage.getItem("user"));
-            //         console.log(user)
-            //         if(user) {
-            //             window.location.href='index.html';
-            //         }
-            //     }else {
-            //         alert(res.data.resMsg)
-            //     }
-            // })
         })
     })
 </script>

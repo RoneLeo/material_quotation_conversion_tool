@@ -109,7 +109,7 @@ a.am-btn-default:visited {
 }
 .result .result-num {
     padding-left: 20px;
-    font-size: 54px;
+    font-size: 34px;
     color: #890098;
 }
 .result .result-num a{
@@ -124,6 +124,22 @@ a.am-btn-default:visited {
 }
 .result .result-num a:hover {
     color: #560066;
+}
+.price-table {
+    width: 100%;
+    color: #333;
+}
+.price-table a {
+    color: #560066;
+    cursor: pointer;
+    padding: 3px 15px;
+    background-color: transparent;
+}
+.price-table a:hover {
+    color: #333;
+}
+.price-table td {
+    text-align: center;
 }
 
 .footer {
