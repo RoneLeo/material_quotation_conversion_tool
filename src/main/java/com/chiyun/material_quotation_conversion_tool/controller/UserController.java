@@ -1,5 +1,6 @@
 package com.chiyun.material_quotation_conversion_tool.controller;
 
+import com.chiyun.material_quotation_conversion_tool.common.ApiPageResult;
 import com.chiyun.material_quotation_conversion_tool.common.ApiResult;
 import com.chiyun.material_quotation_conversion_tool.common.MustLogin;
 import com.chiyun.material_quotation_conversion_tool.common.SessionHelper;
@@ -11,6 +12,9 @@ import com.chiyun.material_quotation_conversion_tool.utils.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -112,6 +116,15 @@ public class UserController {
     @MustLogin(rolerequired = {1})
     public ApiResult findAll() {
         return ApiResult.SUCCESS(userRepository.findAll());
+    }
+
+    @RequestMapping("/findAllByPage")
+    @ApiOperation("分页获取所有用户")
+    @MustLogin(rolerequired = {1})
+    public ApiResult findAllByPage(@RequestParam @ApiParam("页码") int page, @RequestParam @ApiParam("分页大小") int pagesize) {
+        Pageable pageable = PageRequest.of(page - 1, pagesize);
+        Page<UserEntity> list = userRepository.findAll(pageable);
+        return ApiPageResult.SUCCESS(list.getContent(), page, pagesize, list.getTotalElements(), list.getTotalPages());
     }
 
     @RequestMapping("/changePassword")
