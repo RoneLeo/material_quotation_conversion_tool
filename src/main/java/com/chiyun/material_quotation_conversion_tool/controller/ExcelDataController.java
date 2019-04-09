@@ -224,10 +224,11 @@ public class ExcelDataController {
             data.add(excelDataEntity);
         }
         try {
-            batchUpdate.batchInsertIk(data);
-            return ApiResult.SUCCESS();
+            int[] ss = batchUpdate.batchInsertIk(data);
+            return ApiResult.SUCCESS(ss.length);
         } catch (Exception e) {
-            return ApiResult.FAILURE();
+            e.printStackTrace();
+            return ApiResult.SUCCESS("添加成功，已过滤重复规格数据");
         }
     }
 

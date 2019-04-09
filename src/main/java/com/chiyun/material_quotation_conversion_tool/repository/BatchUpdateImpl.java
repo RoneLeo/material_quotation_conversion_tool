@@ -18,9 +18,9 @@ public class BatchUpdateImpl {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public Integer batchInsertIk(List<ExcelDataEntity> ikList) {
+    public int[] batchInsertIk(List<ExcelDataEntity> ikList) {
         String sql = "insert excel_data(project_id,goods_name,goods_model,goods_unit,number) values(?,?,?,?,?)";
-        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+        return jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 ps.setInt(1, ikList.get(i).getXmbh());
                 ps.setString(2, ikList.get(i).getClmc());
@@ -33,7 +33,6 @@ public class BatchUpdateImpl {
                 return ikList.size();
             }
         });
-        return 0;
     }
 
 //    public Integer batchUpdateIk(List<IK> ikList) {
