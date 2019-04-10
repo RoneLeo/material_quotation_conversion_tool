@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -59,7 +60,7 @@ public class ExcelDataController {
         if (StringUtils.isEmpty(fileName) || size == 0) {
             return ApiResult.FAILURE("文件不能为空");
         }
-        if (xmmc.isEmpty()) {
+        if (xmmc == null || xmmc.isEmpty()) {
             xmmc = fileName;
         }
         //批量导入
@@ -185,7 +186,7 @@ public class ExcelDataController {
     @MustLogin(rolerequired = {0})
     public void getexcelnew(@RequestParam @ApiParam("项目id") int xmbh,
                             @RequestParam @ApiParam("折算比率") BigDecimal discount,
-                            @RequestParam @ApiParam("导出类型:0-折算价表，1-基价表，2-成本价表") int lx, HttpServletResponse response) throws IOException {
+                            @RequestParam @ApiParam("导出类型:0-折算价表，1-基价表，2-成本价表") int lx, HttpServletResponse response, HttpServletRequest request) throws IOException {
         ProjectEntity projectEntity = projectRepository.findById(xmbh);
         if (projectEntity == null) {
             MessageUtils.resultMsg(response, ApiResult.FAILURE("没有该项目信息"));
@@ -197,7 +198,7 @@ public class ExcelDataController {
             return;
         }
         String title = projectEntity.getXmmc();
-        ExportExcelNew.exportEXL(projectEntity, title, list, response, discount, lx);
+        ExportExcelNew.exportEXL(projectEntity, title, list, response, request,discount, lx);
     }
 
 
