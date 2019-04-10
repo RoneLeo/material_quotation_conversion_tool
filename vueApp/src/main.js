@@ -17,9 +17,7 @@ import 'nprogress/nprogress.css'
 import routes from './routes'
 import 'font-awesome/css/font-awesome.min.css'
 import util from './common/js/util'
-import VueNumberInput from '@chenfengyuan/vue-number-input';
 
-Vue.use(VueNumberInput);
 
 Vue.prototype.$util = util;
 Vue.prototype.$qs = qs;
