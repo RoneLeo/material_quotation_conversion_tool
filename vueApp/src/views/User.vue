@@ -18,7 +18,7 @@
                 <template slot-scope="scope" v-if="scope.row.zh !== 'admin'">
                     <!--<el-button size="mini" @click="">编辑</el-button>-->
                     <el-button size="mini" @click="resetMM(scope.row)">重置密码</el-button>
-                    <el-button size="mini" type="danger" @click="">删除</el-button>
+                    <!--<el-button size="mini" type="danger" @click="deleteUser(scope.row)">删除</el-button>-->
                 </template>
             </el-table-column>
         </el-table>
