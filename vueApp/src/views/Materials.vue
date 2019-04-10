@@ -134,10 +134,10 @@
                 this.$axios.get('/material/findAll').then((res) => {
                     this.listLoading = false;
                     this.tableData = res.data;
-                    this.tableData.forEach(item => {
-                        item.cbj = item.cbj.toFixed(2);
-                        item.jj = item.jj.toFixed(2);
-                    })
+//                    this.tableData.forEach(item => {
+//                        item.cbj = item.cbj.toFixed(2);
+//                        item.jj = item.jj.toFixed(2);
+//                    })
                 });
             },
             //显示新增界面
