@@ -1,5 +1,6 @@
 package com.chiyun.material_quotation_conversion_tool.controller;
 
+import com.chiyun.material_quotation_conversion_tool.common.ApiPageResult;
 import com.chiyun.material_quotation_conversion_tool.common.ApiResult;
 import com.chiyun.material_quotation_conversion_tool.common.MustLogin;
 import com.chiyun.material_quotation_conversion_tool.common.SessionHelper;
@@ -12,6 +13,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.catalina.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -114,6 +118,21 @@ public class ProjectController {
             result = projectRepository.findAllByUid(userEntity.getId());
         }
         return ApiResult.SUCCESS(result);
+    }
+
+    @ApiOperation(value = "分页获取项目")
+    @RequestMapping("findAllByPage")
+    @MustLogin(rolerequired = {0})
+    public ApiResult<Object> findAllByPage(@RequestParam @ApiParam("页码") int page, @RequestParam @ApiParam("分页大小") int pagesize) {
+        UserEntity userEntity = SessionHelper.getuser();
+        Page<ProjectEntity> result;
+        Pageable pageable = PageRequest.of(page - 1, pagesize);
+        if (userEntity.getJs() == 1) {
+            result = projectRepository.findAll(pageable);
+        } else {
+            result = projectRepository.findAllByUid(userEntity.getId(), pageable);
+        }
+        return ApiPageResult.SUCCESS(result.getContent(), page, pagesize, result.getTotalElements(), result.getTotalPages());
     }
 
     @ApiOperation(value = "通过id查詢项目")

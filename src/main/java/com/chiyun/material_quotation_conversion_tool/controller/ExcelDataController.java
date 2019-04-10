@@ -7,6 +7,7 @@ import com.chiyun.material_quotation_conversion_tool.common.SessionHelper;
 import com.chiyun.material_quotation_conversion_tool.entity.ExcelDataEntity;
 import com.chiyun.material_quotation_conversion_tool.entity.ProjectEntity;
 import com.chiyun.material_quotation_conversion_tool.entity.UserEntity;
+import com.chiyun.material_quotation_conversion_tool.repository.BatchUpdateImpl;
 import com.chiyun.material_quotation_conversion_tool.repository.ExcelDataRepository;
 import com.chiyun.material_quotation_conversion_tool.repository.ProjectRepository;
 import com.chiyun.material_quotation_conversion_tool.utils.*;
@@ -16,10 +17,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -37,6 +35,8 @@ public class ExcelDataController {
     private ExcelDataRepository excelDataRepository;
     @Resource
     private ProjectRepository projectRepository;
+    @Resource
+    private BatchUpdateImpl batchUpdate;
 
 
     @ApiOperation(value = "通过Excel导入项目材料数据")
@@ -206,4 +206,78 @@ public class ExcelDataController {
         projectEntity.setJcf(projectEntity.getJcf() == null ? new BigDecimal(0) : projectEntity.getJcf());
         return projectRepository.save(projectEntity);
     }
+
+    @ApiOperation("添加所有")
+    @RequestMapping("/addAll")
+    @MustLogin(rolerequired = {0})
+    public ApiResult addAll(@RequestBody List<MateEntity> list) {
+        if (list == null || list.isEmpty())
+            return ApiResult.FAILURE("数据为空");
+        List<ExcelDataEntity> data = new ArrayList<>();
+        for (MateEntity entity : list) {
+            ExcelDataEntity excelDataEntity = new ExcelDataEntity();
+            excelDataEntity.setXmbh(entity.getXmbh());
+            excelDataEntity.setClgg(StringUtils.isEmpty(entity.getClgg()) ? "" : entity.getClgg());
+            excelDataEntity.setClmc(StringUtils.isEmpty(entity.getClmc()) ? "" : entity.getClmc());
+            excelDataEntity.setCldw(StringUtils.isEmpty(entity.getCldw()) ? "" : entity.getCldw());
+            excelDataEntity.setClsl(entity.getClsl());
+            data.add(excelDataEntity);
+        }
+        try {
+            int[] ss = batchUpdate.batchInsertIk(data);
+            return ApiResult.SUCCESS(ss.length);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResult.SUCCESS("添加成功，已过滤重复规格数据");
+        }
+    }
+
+    public static class MateEntity {
+        private Integer xmbh;
+        private String clmc;
+        private String clgg;
+        private String cldw;
+        private int clsl;
+
+        public Integer getXmbh() {
+            return xmbh;
+        }
+
+        public void setXmbh(Integer xmbh) {
+            this.xmbh = xmbh;
+        }
+
+        public String getClmc() {
+            return clmc;
+        }
+
+        public void setClmc(String clmc) {
+            this.clmc = clmc;
+        }
+
+        public String getClgg() {
+            return clgg;
+        }
+
+        public void setClgg(String clgg) {
+            this.clgg = clgg;
+        }
+
+        public String getCldw() {
+            return cldw;
+        }
+
+        public void setCldw(String cldw) {
+            this.cldw = cldw;
+        }
+
+        public int getClsl() {
+            return clsl;
+        }
+
+        public void setClsl(int clsl) {
+            this.clsl = clsl;
+        }
+    }
+
 }

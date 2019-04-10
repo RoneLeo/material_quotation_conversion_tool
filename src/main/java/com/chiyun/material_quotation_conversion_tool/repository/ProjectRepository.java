@@ -1,6 +1,8 @@
 package com.chiyun.material_quotation_conversion_tool.repository;
 
 import com.chiyun.material_quotation_conversion_tool.entity.ProjectEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -23,7 +25,11 @@ public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
     //查询全部数据
     List<ProjectEntity> findAll();
 
+    Page<ProjectEntity> findAll(Pageable pageable);
+
     List<ProjectEntity> findAllByUid(String uid);
+
+    Page<ProjectEntity> findAllByUid(String uid, Pageable pageable);
 
     List<ProjectEntity> findAllByOrderByIdDesc();
 
