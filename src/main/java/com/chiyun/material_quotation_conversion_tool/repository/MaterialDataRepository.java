@@ -20,7 +20,7 @@ public interface MaterialDataRepository extends JpaRepository<MaterialdataEntity
 
     Page<MaterialdataEntity> findAllByUidAndClggLikeAndClmcLike(String uid, String clgg, String clmc, Pageable pageable);
 
-    @Query(value = "SELECT * FROM (SELECT me.* FROM (SELECT * from materialdata WHERE uid = ?2)me LEFT JOIN (SELECT * from excel_data WHERE project_id = ?1)se ON goods_model = typesize WHERE se.id is NULL) be WHERE  name LIKE ?4 AND typesize LIKE ?3 ", nativeQuery = true)
+    @Query(value = "SELECT * FROM materialdata WHERE uid = ?2 AND typesize LIKE ?3 AND name LIKE ?4 AND NOT exists(SELECT 1 FROM excel_data WHERE project_id = ?1 AND goods_model = typesize ) ", nativeQuery = true)
     List<MaterialdataEntity> findAllByXmbhAndClggLikeAndClmcLike(Integer xmbh, String uid, String clgg, String clmc);
 
     @Transactional
