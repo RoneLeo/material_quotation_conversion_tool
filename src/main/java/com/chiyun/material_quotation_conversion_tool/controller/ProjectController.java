@@ -113,9 +113,9 @@ public class ProjectController {
         UserEntity userEntity = SessionHelper.getuser();
         List<ProjectEntity> result;
         if (userEntity.getJs() == 1) {
-            result = projectRepository.findAll();
+            result = projectRepository.findAllOrderByIdDesc();
         } else {
-            result = projectRepository.findAllByUid(userEntity.getId());
+            result = projectRepository.findAllByUidOrderByIdDesc(userEntity.getId());
         }
         return ApiResult.SUCCESS(result);
     }

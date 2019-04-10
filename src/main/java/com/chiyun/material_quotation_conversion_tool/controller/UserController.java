@@ -133,6 +133,10 @@ public class UserController {
     public ApiResult changePassword(@RequestParam() @ApiParam("原密码") String ymm,
                                     @RequestParam() @ApiParam("新密码") String xmm) throws Exception {
         UserEntity userEntity = SessionHelper.getuser();
+        Optional<UserEntity> optional = userRepository.findById(userEntity.getId());
+        if (!optional.isPresent())
+            return ApiResult.FAILURE("用户不存在");
+        userEntity = optional.get();
         String oldpass = MD5Util.MD5(ymm);
         if (!userEntity.getMm().equals(oldpass))
             return ApiResult.FAILURE("原始密码输入错误");

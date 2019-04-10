@@ -23,11 +23,13 @@ public interface ProjectRepository extends CrudRepository<ProjectEntity, Long> {
     ProjectEntity findById(Integer id);
 
     //查询全部数据
-    List<ProjectEntity> findAll();
+    @Query(value = "SELECT * FROM project ORDER BY id DESC ", nativeQuery = true)
+    List<ProjectEntity> findAllOrderByIdDesc();
 
     Page<ProjectEntity> findAll(Pageable pageable);
 
-    List<ProjectEntity> findAllByUid(String uid);
+    @Query(value = "SELECT * FROM project WHERE uid = ?1 ORDER BY id DESC ", nativeQuery = true)
+    List<ProjectEntity> findAllByUidOrderByIdDesc(String uid);
 
     Page<ProjectEntity> findAllByUid(String uid, Pageable pageable);
 
