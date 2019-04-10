@@ -139,7 +139,7 @@ public class ExcelImportUtils {
             ExcelDataEntity excelDataEntity = new ExcelDataEntity();
             Row row = sheet1.getRow(r);
             if (row == null || StringUtils.isRowEmpty(row)) {
-                errorMsg.append(br).append("第").append(r + 1).append("行数据有问题，请仔细检查！");
+//                errorMsg.append(br).append("第").append(r + 1).append("行数据有问题，请仔细检查！");
                 continue;
             }
             //存项目名称
@@ -171,6 +171,10 @@ public class ExcelImportUtils {
                     String str = cell.getStringCellValue();
                     if (str.equals("运输费")) {
                         projectEntity.setYsf(BigDecimal.valueOf(row.getCell(6).getNumericCellValue()));
+                        projectEntity = excelDataController.saveproject(projectEntity);
+                        break;
+                    } else if (str.equals("第三方检测费")) {
+                        projectEntity.setJcf(BigDecimal.valueOf(row.getCell(6).getNumericCellValue()));
                         projectEntity = excelDataController.saveproject(projectEntity);
                         break;
                     } else {

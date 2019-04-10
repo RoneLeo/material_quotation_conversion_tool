@@ -14,11 +14,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ExportExcelNew {
-    public static void exportEXL(ProjectEntity projectEntity, String fileName, List<Map<String, Object>> dataset, HttpServletResponse response, BigDecimal index, int lx) {
+    public static void exportEXL(ProjectEntity projectEntity, String fileName, List<Map<String, Object>> dataset, HttpServletResponse response, HttpServletRequest request, BigDecimal index, int lx) {
         try {
             String dateType = "yyyy";
             // 创建HSSFWorkbook对象(excel的文档对象)
@@ -296,7 +297,16 @@ public class ExportExcelNew {
             cell.setCellStyle(cellStyle);
             // 输出Excel文件
             fileName = fileName + ".xls";
-            response.addHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("UTF-8"), "ISO8859-1"));
+            String userAgent = request.getHeader("USER-AGENT");
+            String newFilename = URLEncoder.encode(fileName, "UTF-8").replace("+", " ");
+            if (userAgent != null) {
+                if (userAgent.contains("edge") || userAgent.contains("Edge") || userAgent.contains("Trident") || userAgent.contains("trident")) {
+                    newFilename = URLEncoder.encode(fileName, "UTF-8").replace("+", " ");
+                } else {
+                    newFilename = new String(fileName.getBytes("UTF-8"), "ISO8859-1");
+                }
+            }
+            response.addHeader("Content-Disposition", "attachment;filename=" + newFilename);
             response.setContentType("application/vnd.ms-excel");
             OutputStream toClient = response.getOutputStream();
             wb.write(toClient);
