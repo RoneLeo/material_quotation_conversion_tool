@@ -6,7 +6,7 @@ import Vue from 'vue'
 import App from './App'
 
 //import 'element-ui/lib/theme-default/index.css'
-import './assets/theme/element-#0B911B/index.css'
+import './assets/theme/element-#444547/index.css'
 import VueRouter from 'vue-router'
 import store from './vuex/store'
 import Vuex from 'vuex'
@@ -17,6 +17,9 @@ import 'nprogress/nprogress.css'
 import routes from './routes'
 import 'font-awesome/css/font-awesome.min.css'
 import util from './common/js/util'
+import VueNumberInput from '@chenfengyuan/vue-number-input';
+
+Vue.use(VueNumberInput);
 
 Vue.prototype.$util = util;
 Vue.prototype.$qs = qs;

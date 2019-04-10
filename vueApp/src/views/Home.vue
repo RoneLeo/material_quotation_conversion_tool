@@ -2,17 +2,17 @@
     <el-row class="container">
         <el-col :span="24" class="header">
             <el-col :span="12" class="logo">
+                <img src="../assets/images/logo.png" alt="">
                 {{collapsed?'':sysName}}
             </el-col>
             <el-col :span="12" class="userinfo">
                 <el-dropdown trigger="click" size="medium">
 					<span class="el-dropdown-link userinfo-inner">
                         <i class="fa fa-user"></i>
-						{{sysUserName}},
-                        {{sysgGsmc}}
+						{{sysUserName}}
                     </span>
                     <el-dropdown-menu slot="dropdown" >
-                        <el-dropdown-item @click.native="changePassWord">修改密码</el-dropdown-item>
+                        <!--<el-dropdown-item @click.native="changePassWord">修改密码</el-dropdown-item>-->
                         <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -31,7 +31,7 @@
                             </el-menu-item>
                         </el-submenu>
                         <!--单个节点菜单-->
-                        <el-menu-item style="font-size: 18px;" v-if="limit <= item.limit && item.leaf && item.children.length>0" :index="item.children[0].path" >
+                        <el-menu-item style="font-size: 18px;" v-if=" (item.limit ? limit && item.limit : 1) && item.leaf && item.children.length>0" :index="item.children[0].path" >
                             <i :class="item.iconCls"></i> {{item.children[0].name}}
                         </el-menu-item>
 
@@ -108,6 +108,7 @@
         },
         mounted() {
             let user = JSON.parse(sessionStorage.getItem('userInfo'));
+            this.limit = user.js;
             if(user) {
                 this.sysUserName = user.zh;
             }else {
@@ -118,7 +119,7 @@
             //退出登录
             logout: function () {
                 var _this = this;
-                this.$confirm('确认退出吗?', '提示', {
+                this.$confirm('确认退出登录吗?', '提示', {
                     //type: 'warning'
                 }).then(() => {
                     sessionStorage.removeItem('user');
@@ -186,7 +187,7 @@
                 img {
                     width: 40px;
                     float: left;
-                    margin: 10px 10px 10px 18px;
+                    margin: 10px 10px 10px 10px;
                 }
                 .txt {
                     color: #fff;

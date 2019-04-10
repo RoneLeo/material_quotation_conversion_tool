@@ -8,18 +8,14 @@ import UpdateMaterials from './views/UpdateMaterials.vue'
 
 
 
-
+import ChangePassword from './views/ChangePassword.vue'
 import User from './views/User.vue'
-import Summary from './views/Summary.vue'
 
 import Company from './views/Company.vue'
 import Check from './views/Check.vue'
 
-import Search from './views/Search.vue'
-import Account from './views/Account.vue'
-import ChangePassword from './views/ChangePassword.vue'
 
-//limit 1-分公司,0-总公司
+//limit 0-普通用户,1-管理员
 
 let routes = [
     {
@@ -44,7 +40,7 @@ let routes = [
         component: Home,
         name: '',
         iconCls: 'fa fa-search',
-        limit: 1,
+        limit: 0,
         leaf: true,
         children: [
             { path: '/Discount', component: Discount, name: '查询/计算' }
@@ -55,7 +51,7 @@ let routes = [
         component: Home,
         name: '',
         limit: 0,
-        iconCls: 'fa fa-address-card',
+        iconCls: 'fa fa-window-restore',
         leaf: true,
         children: [
             { path: '/Projects', component: Projects, name: '项目管理' }
@@ -88,7 +84,7 @@ let routes = [
         path: '/',
         component: Home,
         name: '',
-        limit: 1,
+        limit: 0,
         iconCls: 'fa fa-key',
         leaf: true,
         children: [
@@ -99,75 +95,38 @@ let routes = [
         path: '/',
         component: Home,
         name: '',
-        limit: 0,
+        limit: 1,
         iconCls: 'fa fa-user',
         leaf: true,
         children: [
             { path: '/User', component: User, name: '用户管理' }
         ]
     },
-    {
-        path: '/',
-        component: Home,
-        name: '',
-        hidden: true,
-        iconCls: 'fa fa-search',
-        limit: 1,
-        leaf: true,
-        children: [
-            { path: '/Search', component: Search, name: '查询缴费' }
-        ]
-    },
-    {
-        path: '/',
-        component: Home,
-        name: '',
-        hidden: true,
-        limit: 1,
-        iconCls: 'fa fa-address-card',
-        leaf: true,//只有一个节点
-        children: [
-            { path: '/Account', component: Account, name: '缴费信息' }
-        ]
-    },
-    {
-        path: '/',
-        component: Home,
-        name: '',
-        iconCls: 'fa fa-check',
-        limit: 0,
-        hidden: true,
-        leaf: true,
-        children: [
-            { path: '/Check', component: Check, name: '审核记录' }
-        ]
-    },
-
-    {
-        path: '/',
-        component: Home,
-        name: '',
-        iconCls: 'fa fa-home',
-        limit: 0,
-        hidden: true,
-        leaf: true,
-        children: [
-            { path: '/Company', component: Company, name: '公司管理' }
-        ]
-    },
-
-    {
-        path: '/',
-        component: Home,
-        name: '',
-        limit: 1,
-        hidden: true,
-        iconCls: 'fa fa-th-list',
-        leaf: true,
-        children: [
-            { path: '/summary', component: Summary, name: '月度报表' }
-        ]
-    },
+    // {
+    //     path: '/',
+    //     component: Home,
+    //     name: '',
+    //     iconCls: 'fa fa-check',
+    //     limit: 0,
+    //     hidden: true,
+    //     leaf: true,
+    //     children: [
+    //         { path: '/Check', component: Check, name: '审核记录' }
+    //     ]
+    // },
+    //
+    // {
+    //     path: '/',
+    //     component: Home,
+    //     name: '',
+    //     iconCls: 'fa fa-home',
+    //     limit: 0,
+    //     hidden: true,
+    //     leaf: true,
+    //     children: [
+    //         { path: '/Company', component: Company, name: '公司管理' }
+    //     ]
+    // },
 
 
 ];

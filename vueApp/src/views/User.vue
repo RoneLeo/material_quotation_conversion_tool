@@ -11,12 +11,13 @@
         <!--列表-->
         <el-table size="medium" :data="tableData" v-loading="listLoading"
                   style="width: 100%;">
+            <el-table-column type="index" width="40"></el-table-column>
             <el-table-column prop="zh" label="账号"></el-table-column>
             <el-table-column prop="js" label="角色" :formatter="formatterJS"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope" v-if="scope.row.zh !== 'admin'">
                     <!--<el-button size="mini" @click="">编辑</el-button>-->
-                    <el-button size="mini" @click="">修改密码</el-button>
+                    <el-button size="mini" @click="resetMM(scope.row)">重置密码</el-button>
                     <el-button size="mini" type="danger" @click="">删除</el-button>
                 </template>
             </el-table-column>
@@ -86,6 +87,11 @@
             this.getData();
         },
         methods: {
+            resetMM(row) {
+                this.$axios.post('/user/resetPassword', {id: row.id}).then(res => {
+                    this.$message.success('密码已重置为666666，建议尽快修改为自己的密码。');
+                })
+            },
             formatterJS(row){
                 return row.js == 0 ? '普通用户' : '管理员';
             },

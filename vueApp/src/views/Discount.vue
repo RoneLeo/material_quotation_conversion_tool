@@ -7,7 +7,7 @@
                     <el-select v-model="searchData.xmbh" placeholder="请选择项目" clearable>
                         <el-option v-for="item in projects"
                             :key="item.id"
-                            :label="item.xmmc"
+                            :label="item.wzxmmc"
                             :value="item.id">
                         </el-option>
                     </el-select>
@@ -106,8 +106,11 @@
         align-items: center;
         .title {
             /*margin-top: 70px;*/
-            font-size: 36px;
-            color: #199025;
+            font-size: 34px;
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-shadow: 0 0 3px #666;
+            color: #F8D200;
             text-align: center;
         }
 

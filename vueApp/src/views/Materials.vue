@@ -5,47 +5,46 @@
             <el-form :inline="true" size="medium">
                 <el-form-item style="margin: auto;">
                     <el-button type="primary" @click="handleImport">导入可用材料</el-button>
+                    <el-button type="primary">
+                        <a :href="$url+'/file/getModelFile?lx=2'" style="color: #fff;text-decoration: none">材料EXCEL模板</a>
+                    </el-button>
                 </el-form-item>
             </el-form>
         </el-col>
         <!--列表-->
         <el-table size="medium" :data="tableData" v-loading="listLoading"
                   style="width: 100%;">
+            <el-table-column type="index" width="50"></el-table-column>
             <el-table-column prop="clmc" label="材料名称" width="280"></el-table-column>
             <el-table-column prop="clgg" label="材料规格"></el-table-column>
             <el-table-column prop="cldw" label="材料单位"></el-table-column>
-            <el-table-column prop="clsl" label="材料数量"></el-table-column>
             <el-table-column prop="cbj" label="成本价"></el-table-column>
             <el-table-column prop="jj" label="基价"></el-table-column>
-            <el-table-column label="操作" width="200">
+            <el-table-column label="操作" width="220">
                 <template slot-scope="scope">
-                    <!--<el-button size="mini" @click="">编辑</el-button>-->
-                    <el-button size="mini" @click="">修改价目</el-button>
-                    <el-button size="mini" type="danger" @click="">删除</el-button>
+                    <el-button size="mini" @click="updatePrice(scope.row)">修改价目</el-button>
+                    <el-button size="mini" type="danger" @click="deleteMaterial(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
 
         <!--新增界面-->
-        <el-dialog title="用户信息" :visible.sync="addFormVisible" :close-on-click-modal="false" width="40%">
-            <el-form :model="addForm" label-width="120px" ref="addForm">
-                <el-form-item
-                        label="账号"
-                        prop="zh"
-                        :rules="[{ required: true, message: '账号号不能为空', trigger: 'blur' }]">
-                    <el-input v-model="addForm.zh"></el-input>
+        <el-dialog title="修改材料价目" :visible.sync="addFormVisible" :close-on-click-modal="false" width="40%">
+            <el-form :model="addForm" ref="addForm" label-width="120px">
+                <el-form-item label="材料名称">
+                    <span style="font-size: 16px;">{{addForm.clmc}}</span>
                 </el-form-item>
-                <el-form-item label="密码"
-                              prop="mm"
-                              :rules="[{ required: true, message: '密码不能为空', trigger: 'blur' }]">
-                    <el-input v-model="addForm.mm"></el-input>
+                <el-form-item label="材料规格">
+                    <span style="font-size: 16px;">{{addForm.clgg}}</span>
                 </el-form-item>
-                <el-form-item label="角色" prop="js"
-                              :rules="[{ required: true, message: '密码不能为空', trigger: 'blur' }]">
-                    <el-select v-model="addForm.js" style="width:100%;">
-                        <el-option label="普通用户" value="0"></el-option>
-                        <el-option label="系统用户" value="1"></el-option>
-                    </el-select>
+                <el-form-item label="材料单位">
+                    <span style="font-size: 16px;">{{addForm.cldw}}</span>
+                </el-form-item>
+                <el-form-item label="成本价">
+                    <el-input-number v-model="addForm.cbj" :min="0.00" :step="0.01" :precision="2"  label="成本价" size="small" style="width: 180px"></el-input-number>
+                </el-form-item>
+                <el-form-item label="基价">
+                    <el-input-number v-model="addForm.jj" :min="0.00" :step="0.01" :precision="2"  label="基价" size="small" style="width: 180px"></el-input-number>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -54,7 +53,7 @@
             </div>
         </el-dialog>
 
-        <el-dialog title="导入可用材料" :visible.sync="importFormShow" :close-on-click-modal="false">
+        <el-dialog title="导入可用材料" :visible.sync="importFormShow" :close-on-click-modal="false" width="40%">
             <el-form label-width="120px" ref="importForm">
                 <el-form-item label="文件">
                     <input type="file" id="file" @change="handlerUpload">
@@ -87,6 +86,27 @@
             this.getData();
         },
         methods: {
+            updatePrice(row) {
+                this.addFormVisible = true;
+                this.addForm = Object.assign({}, row);
+            },
+            deleteMaterial(row) {
+                this.$confirm('此操作将为本项目删除该材料, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios.post('/material/deleteOneById', {clid: row.clid}).then((res) => {
+                        this.$message({type: 'success', message: res.resMsg});
+                        this.getData();
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
             handleImport() {
                 this.importFormShow = true;
             },
@@ -114,6 +134,10 @@
                 this.$axios.get('/material/findAll').then((res) => {
                     this.listLoading = false;
                     this.tableData = res.data;
+                    this.tableData.forEach(item => {
+                        item.cbj = item.cbj.toFixed(2);
+                        item.jj = item.jj.toFixed(2);
+                    })
                 });
             },
             //显示新增界面
@@ -123,14 +147,12 @@
             },
             //提交
             addSubmit: function () {
-                console.log(this.addForm)
                 this.$refs.addForm.validate((valid) => {
                     if (valid) {
-                        this.$axios.post('/user/add', this.addForm).then((res) => {
-                            this.$message.success('添加成功!');
+                        this.$axios.post('/material/updateOne', {clid: this.addForm.clid, jj: this.addForm.jj, cbj: this.addForm.cbj}).then((res) => {
+                            this.$message.success(res.resMsg);
                             this.getData();
                             this.addFormVisible = false;
-                            this.$refs.addForm.resetFields()
                         });
                     }
                 });

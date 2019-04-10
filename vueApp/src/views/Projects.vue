@@ -5,17 +5,21 @@
             <el-form :inline="true" size="medium">
                 <el-form-item style="margin: auto;">
                     <el-button type="primary" @click="handleImport">导入项目</el-button>
+                    <el-button type="primary">
+                        <a :href="$url+'/file/getModelFile?lx=1'" style="color: #fff;text-decoration: none">项目EXCEL模板</a>
+                    </el-button>
                 </el-form-item>
             </el-form>
         </el-col>
         <!--列表-->
         <el-table size="medium" :data="tableData" v-loading="listLoading"
                   style="width: 100%;">
+            <el-table-column type="index" width="50"></el-table-column>
             <el-table-column prop="wzxmmc" label="项目名称"></el-table-column>
             <el-table-column prop="bjdw" label="报价单位"></el-table-column>
             <el-table-column prop="ysf" label="运输费"></el-table-column>
             <el-table-column prop="jcf" label="检测费"></el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" width="300">
                 <template slot-scope="scope">
                     <el-button size="mini" @click="handleEdit(scope.row)">修改</el-button>
                     <el-button size="mini" @click="handleLook(scope.row)">材料详情</el-button>
@@ -57,7 +61,7 @@
             </div>
         </el-dialog>
 
-        <el-dialog title="导入项目" :visible.sync="importFormShow" :close-on-click-modal="false" @closed="closeClear">
+        <el-dialog title="导入项目" :visible.sync="importFormShow" :close-on-click-modal="false" @closed="closeClear" width="40%">
             <el-form label-width="120px" ref="importForm">
                 <el-form-item label="项目名称">
                     <el-input v-model="importForm.xmmc"></el-input>
